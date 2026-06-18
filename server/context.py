@@ -144,6 +144,53 @@ def _schedule_overview(data: dict[str, Any], *, limit: int = 15) -> str:
     return "\n".join(lines)
 
 
+def _zones_breakdown(data: dict[str, Any]) -> str:
+    buckets: dict[str, list[str]] = {"зелёная": [], "жёлтая": [], "красная": [], "нет данных": []}
+    for campus in data.get("campuses") or []:
+        zone = _campus_zone(campus) or "нет данных"
+        buckets[zone].append(campus.get("campus") or "—")
+    lines = ["Распределение кампусов по зонам динамики:"]
+    for zone, names in buckets.items():
+        if names:
+            lines.append(f"- {zone}: {', '.join(sorted(names))}")
+    return "\n".join(lines)
+
+
+def _kpi_table(data: dict[str, Any]) -> str:
+    campuses = data.get("campuses") or []
+    if not campuses:
+        return ""
+    headers = ["Кампус", "Тип", "РМ", "MAU", "CSI зак.", "CSI уч.", "Зона"]
+    rows = [f"| {' | '.join(headers)} |", f"| {' | '.join(['---'] * len(headers))} |"]
+    for campus in campuses:
+        p07 = (campus.get("periods") or {}).get("2026-07") or {}
+        zone = _campus_zone(campus) or "—"
+        rows.append(
+            "| "
+            + " | ".join(
+                [
+                    campus.get("campus") or "—",
+                    campus.get("campusType") or "—",
+                    str(campus.get("workplaces") or "—"),
+                    str(p07.get("mau") if p07.get("mau") is not None else campus.get("mau") or "—"),
+                    str(
+                        p07.get("csiCustomer")
+                        if p07.get("csiCustomer") is not None
+                        else campus.get("csiCustomer") or "—"
+                    ),
+                    str(
+                        p07.get("csiParticipants")
+                        if p07.get("csiParticipants") is not None
+                        else campus.get("csiParticipants") or "—"
+                    ),
+                    zone,
+                ]
+            )
+            + " |"
+        )
+    return "## Таблица KPI по всем кампусам (период 2026-07)\n\n" + "\n".join(rows)
+
+
 def _network_summary(data: dict[str, Any]) -> str:
     campuses = data.get("campuses") or []
     zones = {"зелёная": 0, "жёлтая": 0, "красная": 0, "нет данных": 0}
@@ -211,7 +258,12 @@ def _match_campuses(campuses: list[dict[str, Any]], query: str) -> list[dict[str
     return [c for _, c in matched]
 
 
-def build_context(*, user_message: str, active_section: str | None = None) -> str:
+def build_context(
+    *,
+    user_message: str,
+    active_section: str | None = None,
+    extra_sections: list[str] | None = None,
+) -> str:
     data = load_data()
     campuses = data.get("campuses") or []
     q = user_message.lower()
@@ -219,27 +271,34 @@ def build_context(*, user_message: str, active_section: str | None = None) -> st
     schedule_query = bool(
         re.search(r"старт|бассейн|график|интенсив|ближайш|расписан|когда\s+нач", q)
     )
-    detailed = wants_report or active_section in {"block2", "block3"} or schedule_query
+    broad_query = wants_report or not _match_campuses(campuses, user_message)
+    detailed = wants_report or active_section in {"block2", "block3"} or schedule_query or broad_query
     matched = _match_campuses(campuses, user_message)
 
     parts = [
         _network_summary(data),
         "",
+        _zones_breakdown(data),
+        "",
+        _kpi_table(data),
+        "",
         "Нормы CSI:",
         f"- CSI рег. заказчика: красная < {data['norms']['csiCustomer']['red']}, "
         f"жёлтая до {data['norms']['csiCustomer']['yellow']}",
         f"- CSI участников: красная < {data['norms']['csiParticipants']['red']}",
+        "",
+        _schedule_overview(data),
     ]
     if active_section:
         parts.extend(["", f"Пользователь сейчас на вкладке: {SECTION_LABELS.get(active_section, active_section)}"])
-    if schedule_query:
-        parts.extend(["", _schedule_overview(data)])
 
-    selected = matched[:8] if matched else campuses
+    selected = matched[:8] if matched else campuses[:8]
     if matched:
-        parts.extend(["", "Релевантные кампусы:"])
+        parts.extend(["", "Релевантные кампусы (детально):"])
+    elif broad_query and len(campuses) > 8:
+        parts.extend(["", "Детали по кампусам (первые 8; полная таблица KPI выше):"])
     else:
-        parts.extend(["", "Данные по кампусам:"])
+        parts.extend(["", "Детали по кампусам:"])
 
     for campus in selected:
         parts.append(_compact_campus(campus, detailed=detailed or campus in matched[:3]))
@@ -247,6 +306,10 @@ def build_context(*, user_message: str, active_section: str | None = None) -> st
 
     if wants_report and len(matched) <= 1:
         parts.append("Подсказка: сформируй отчёт в markdown с таблицами и выводами.")
+
+    if extra_sections:
+        parts.extend(extra_sections)
+
     return "\n".join(parts).strip()
 
 

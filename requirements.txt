@@ -5,3 +5,4 @@ httpx>=0.27
 langchain-openai>=0.2
 langchain-core>=0.3
 pydantic>=2.6
+duckduckgo-search>=6.0

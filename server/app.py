@@ -17,9 +17,17 @@ from pydantic import BaseModel, Field
 from .context import build_context
 from .data_store import get_sync_status, load_data, refresh_from_sheet
 from .fallback import try_local_answer
+from .knowledge import DASHBOARD_GUIDE, load_school21_knowledge
 from .llm import chat
 from .prompts import ASSISTANT_NAME, SYSTEM_PROMPT
 from .report_data import build_report_data
+from .web_search import (
+    fetch_school21_official,
+    format_search_results,
+    search_web,
+    should_fetch_official_site,
+    should_web_search,
+)
 
 load_dotenv()
 logger = logging.getLogger(__name__)
@@ -135,8 +143,25 @@ def olga_chat(req: ChatRequest) -> ChatResponse:
     if local is not None:
         return _chat_response(local[0])
 
-    context = build_context(user_message=req.message, active_section=req.active_section)
-    system = SYSTEM_PROMPT.format(context=context)
+    extra_sections: list[str] = []
+    if should_web_search(req.message):
+        results = search_web(req.message)
+        extra_sections.extend(["", format_search_results(req.message, results)])
+    elif should_fetch_official_site(req.message):
+        official = fetch_school21_official()
+        if official:
+            extra_sections.extend(["", official])
+
+    context = build_context(
+        user_message=req.message,
+        active_section=req.active_section,
+        extra_sections=extra_sections or None,
+    )
+    system = SYSTEM_PROMPT.format(
+        context=context,
+        school21_knowledge=load_school21_knowledge(),
+        dashboard_guide=DASHBOARD_GUIDE,
+    )
     messages: list[dict[str, str]] = [{"role": "system", "content": system}]
     for item in req.history[-10:]:
         messages.append({"role": item.role, "content": item.content})
