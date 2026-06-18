@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# Запускать на сервере в /opt/shkola21-dashboard после распаковки архива.
+# Запускать из корня проекта: bash deploy/console-setup.sh
 set -euo pipefail
 
-APP_DIR="/opt/shkola21-dashboard"
+APP_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$APP_DIR"
 
 if [ ! -f requirements.txt ]; then
