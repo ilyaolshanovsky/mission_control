@@ -1,9 +1,15 @@
 from __future__ import annotations
 
 import re
+from datetime import date
 from typing import Any
 
 from .context import GROWTH_KEYS, KPI_LABELS, _campus_zone, find_campuses_in_query, load_data
+
+SCHEDULE_QUERY_RE = re.compile(
+    r"старт|старты|бассейн|интенсив|график\s*старт|ближайш|расписан|когда\s+нач",
+    re.IGNORECASE,
+)
 
 METRIC_ALIASES: dict[str, list[str]] = {
     "csiCustomer": [
@@ -231,6 +237,98 @@ def _format_report() -> str:
     return "\n".join(lines)
 
 
+def _parse_ru_date(raw: str) -> date | None:
+    m = re.match(r"(\d{2})\.(\d{2})\.(\d{4})", (raw or "").strip())
+    if not m:
+        return None
+    try:
+        return date(int(m.group(3)), int(m.group(2)), int(m.group(1)))
+    except ValueError:
+        return None
+
+
+def _days_label(target: date) -> str:
+    delta = (target - date.today()).days
+    if delta == 0:
+        return "сегодня"
+    if delta == 1:
+        return "завтра"
+    if delta < 0:
+        return f"{abs(delta)} дн. назад"
+    return f"через {delta} дн."
+
+
+def _collect_start_dates(
+    campuses: list[dict[str, Any]] | None = None,
+    *,
+    future_only: bool = True,
+    limit: int = 20,
+) -> list[tuple[date, str, str]]:
+    data = load_data()
+    pool = campuses if campuses else data.get("campuses") or []
+    today = date.today()
+    rows: list[tuple[date, str, str]] = []
+    for campus in pool:
+        name = campus.get("campus") or "—"
+        for dates in (campus.get("schedule") or {}).values():
+            for raw in dates:
+                parsed = _parse_ru_date(raw)
+                if not parsed:
+                    continue
+                if future_only and parsed < today:
+                    continue
+                rows.append((parsed, name, raw))
+    rows.sort(key=lambda row: (row[0], row[1]))
+    return rows[:limit]
+
+
+def _format_upcoming_starts(message: str) -> str:
+    campuses = find_campuses_in_query(message)
+    rows = _collect_start_dates(campuses or None, limit=15)
+    if campuses:
+        title = f"**Ближайшие старты бассейнов** — {', '.join(c['campus'] for c in campuses)}"
+    else:
+        title = "**Ближайшие старты бассейнов по сети**"
+
+    if not rows:
+        return (
+            f"{title}\n\n"
+            "В графике нет будущих дат стартов для выбранного фильтра.\n\n"
+            "_Данные из блока «График стартов» дашборда._"
+        )
+
+    by_date: dict[date, list[tuple[str, str]]] = {}
+    for parsed, name, raw in rows:
+        by_date.setdefault(parsed, []).append((name, raw))
+
+    lines = [title, ""]
+    for parsed in sorted(by_date):
+        entries = by_date[parsed]
+        display_date = entries[0][1]
+        campus_names = ", ".join(sorted({name for name, _ in entries}))
+        lines.append(f"- **{display_date}** — {campus_names} ({_days_label(parsed)})")
+
+    lines.extend(["", "_Данные из блока «График стартов» дашборда._"])
+    return "\n".join(lines)
+
+
+def _format_campus_starts(campus: dict[str, Any]) -> str:
+    rows = _collect_start_dates([campus], limit=12)
+    name = campus.get("campus") or "—"
+    if not rows:
+        return (
+            f"**График стартов — {name}**\n\n"
+            "Будущих дат стартов бассейна в данных нет.\n\n"
+            "_Данные из блока «График стартов» дашборда._"
+        )
+
+    lines = [f"**График стартов — {name}**", ""]
+    for parsed, _, raw in rows:
+        lines.append(f"- **{raw}** ({_days_label(parsed)})")
+    lines.extend(["", "_Данные из блока «График стартов» дашборда._"])
+    return "\n".join(lines)
+
+
 def try_local_answer(message: str) -> tuple[str, bool] | None:
     q = message.lower().strip()
 
@@ -260,6 +358,12 @@ def try_local_answer(message: str) -> tuple[str, bool] | None:
 
     if any(w in q for w in ("сводный отчёт", "сводный отчет", "сводк")) or re.search(r"\bотч[её]т\b", q):
         return _format_report(), True
+
+    if SCHEDULE_QUERY_RE.search(q):
+        campuses = find_campuses_in_query(message)
+        if campuses and len(campuses) == 1:
+            return _format_campus_starts(campuses[0]), False
+        return _format_upcoming_starts(message), False
 
     campuses = find_campuses_in_query(message)
     metric = _detect_metric(q)

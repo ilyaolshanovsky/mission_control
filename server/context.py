@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import re
+from datetime import date
 from pathlib import Path
 from typing import Any
 
@@ -114,6 +115,35 @@ def _compact_campus(campus: dict[str, Any], *, detailed: bool = False) -> str:
     return "\n".join(lines)
 
 
+def _parse_ru_date(raw: str) -> date | None:
+    m = re.match(r"(\d{2})\.(\d{2})\.(\d{4})", (raw or "").strip())
+    if not m:
+        return None
+    try:
+        return date(int(m.group(3)), int(m.group(2)), int(m.group(1)))
+    except ValueError:
+        return None
+
+
+def _schedule_overview(data: dict[str, Any], *, limit: int = 15) -> str:
+    today = date.today()
+    rows: list[tuple[date, str, str]] = []
+    for campus in data.get("campuses") or []:
+        name = campus.get("campus") or "—"
+        for dates in (campus.get("schedule") or {}).values():
+            for raw in dates:
+                parsed = _parse_ru_date(raw)
+                if parsed and parsed >= today:
+                    rows.append((parsed, name, raw))
+    rows.sort(key=lambda row: (row[0], row[1]))
+    if not rows:
+        return "Ближайшие старты бассейнов: нет будущих дат в данных."
+    lines = ["Ближайшие старты бассейнов по сети:"]
+    for parsed, name, raw in rows[:limit]:
+        lines.append(f"- {raw} — {name}")
+    return "\n".join(lines)
+
+
 def _network_summary(data: dict[str, Any]) -> str:
     campuses = data.get("campuses") or []
     zones = {"зелёная": 0, "жёлтая": 0, "красная": 0, "нет данных": 0}
@@ -139,15 +169,37 @@ def _network_summary(data: dict[str, Any]) -> str:
     )
 
 
+def _name_in_query(name: str, q: str) -> int:
+    if not name:
+        return 0
+    lower_name = name.lower()
+    if lower_name in q:
+        return 10
+    stem = lower_name[: max(4, len(lower_name) - 2)]
+    for token in re.findall(r"[а-яёa-z0-9-]{3,}", q):
+        if len(lower_name) >= 4 and token.startswith(stem):
+            return 8
+        if len(token) >= 4 and lower_name.startswith(token[:4]):
+            return 6
+    for part in re.split(r"[\s\-]+", lower_name):
+        if len(part) < 4:
+            continue
+        if part in q:
+            return 6
+        for token in re.findall(r"[а-яёa-z0-9-]{3,}", q):
+            if token.startswith(part[:4]) or part.startswith(token[:4]):
+                return 5
+    return 0
+
+
 def _match_campuses(campuses: list[dict[str, Any]], query: str) -> list[dict[str, Any]]:
     q = query.lower()
     matched: list[tuple[int, dict[str, Any]]] = []
     for campus in campuses:
         score = 0
-        name = (campus.get("campus") or "").lower()
-        if name and name in q:
-            score += 10
-        if name and any(part in q for part in name.split("-")):
+        name = campus.get("campus") or ""
+        score += _name_in_query(name, q)
+        if name and any(part in q for part in name.lower().split("-")):
             score += 4
         blob = json.dumps(campus, ensure_ascii=False).lower()
         for token in re.findall(r"[а-яёa-z0-9]{3,}", q):
@@ -162,8 +214,12 @@ def _match_campuses(campuses: list[dict[str, Any]], query: str) -> list[dict[str
 def build_context(*, user_message: str, active_section: str | None = None) -> str:
     data = load_data()
     campuses = data.get("campuses") or []
-    wants_report = any(w in user_message.lower() for w in ("отчёт", "отчет", "report", "сводк"))
-    detailed = wants_report or active_section in {"block2", "block3"}
+    q = user_message.lower()
+    wants_report = any(w in q for w in ("отчёт", "отчет", "report", "сводк"))
+    schedule_query = bool(
+        re.search(r"старт|бассейн|график|интенсив|ближайш|расписан|когда\s+нач", q)
+    )
+    detailed = wants_report or active_section in {"block2", "block3"} or schedule_query
     matched = _match_campuses(campuses, user_message)
 
     parts = [
@@ -176,6 +232,8 @@ def build_context(*, user_message: str, active_section: str | None = None) -> st
     ]
     if active_section:
         parts.extend(["", f"Пользователь сейчас на вкладке: {SECTION_LABELS.get(active_section, active_section)}"])
+    if schedule_query:
+        parts.extend(["", _schedule_overview(data)])
 
     selected = matched[:8] if matched else campuses
     if matched:
