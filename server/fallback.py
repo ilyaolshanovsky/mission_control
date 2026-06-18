@@ -7,9 +7,40 @@ from typing import Any
 from .context import GROWTH_KEYS, KPI_LABELS, _campus_zone, find_campuses_in_query, load_data
 
 SCHEDULE_QUERY_RE = re.compile(
-    r"старт|старты|бассейн|интенсив|график\s*старт|ближайш|расписан|когда\s+нач",
+    r"старт|старты|бассейн|интенсив|график\s*старт|ближайш|расписан|когда\s+нач|"
+    r"январ|феврал|март|апрел|ма[йя]|июн|июл|август|сентябр|октябр|ноябр|декабр",
     re.IGNORECASE,
 )
+
+MONTH_STEMS: list[tuple[int, tuple[str, ...]]] = [
+    (1, ("январ", "янв")),
+    (2, ("феврал", "фев")),
+    (3, ("март", "мар")),
+    (4, ("апрел", "апр")),
+    (5, ("май", "мая")),
+    (6, ("июн",)),
+    (7, ("июл",)),
+    (8, ("август", "авг")),
+    (9, ("сентябр", "сен")),
+    (10, ("октябр", "окт")),
+    (11, ("ноябр", "ноя")),
+    (12, ("декабр", "дек")),
+]
+
+MONTH_NAMES_PREP = {
+    1: "январе",
+    2: "феврале",
+    3: "марте",
+    4: "апреле",
+    5: "мае",
+    6: "июне",
+    7: "июле",
+    8: "августе",
+    9: "сентябре",
+    10: "октябре",
+    11: "ноябре",
+    12: "декабре",
+}
 
 METRIC_ALIASES: dict[str, list[str]] = {
     "csiCustomer": [
@@ -258,10 +289,27 @@ def _days_label(target: date) -> str:
     return f"через {delta} дн."
 
 
+def _parse_month_from_query(q: str) -> int | None:
+    for month_num, stems in MONTH_STEMS:
+        if any(stem in q for stem in stems):
+            return month_num
+    m = re.search(r"\b(0?[1-9]|1[0-2])\s*(?:-?й\s+)?(?:месяц|мес)\b", q)
+    if m:
+        return int(m.group(1))
+    return None
+
+
+def _parse_year_from_query(q: str) -> int | None:
+    m = re.search(r"\b(20\d{2})\b", q)
+    return int(m.group(1)) if m else None
+
+
 def _collect_start_dates(
     campuses: list[dict[str, Any]] | None = None,
     *,
     future_only: bool = True,
+    month: int | None = None,
+    year: int | None = None,
     limit: int = 20,
 ) -> list[tuple[date, str, str]]:
     data = load_data()
@@ -275,25 +323,46 @@ def _collect_start_dates(
                 parsed = _parse_ru_date(raw)
                 if not parsed:
                     continue
-                if future_only and parsed < today:
+                if month is not None and parsed.month != month:
+                    continue
+                if year is not None and parsed.year != year:
+                    continue
+                if future_only and month is None and parsed < today:
                     continue
                 rows.append((parsed, name, raw))
     rows.sort(key=lambda row: (row[0], row[1]))
     return rows[:limit]
 
 
-def _format_upcoming_starts(message: str) -> str:
-    campuses = find_campuses_in_query(message)
-    rows = _collect_start_dates(campuses or None, limit=15)
-    if campuses:
-        title = f"**Ближайшие старты бассейнов** — {', '.join(c['campus'] for c in campuses)}"
+def _schedule_title(
+    *,
+    campuses: list[dict[str, Any]] | None,
+    month: int | None,
+    year: int | None,
+) -> str:
+    if month is not None:
+        month_label = MONTH_NAMES_PREP.get(month, f"месяце {month}")
+        year_bit = f" {year}" if year else ""
+        base = f"**Старты бассейнов в {month_label}{year_bit}**"
     else:
-        title = "**Ближайшие старты бассейнов по сети**"
+        base = "**Ближайшие старты бассейнов**"
+    if campuses:
+        return f"{base} — {', '.join(c['campus'] for c in campuses)}"
+    if month is not None:
+        return f"{base} по сети"
+    return "**Ближайшие старты бассейнов по сети**"
 
+
+def _format_schedule_rows(
+    rows: list[tuple[date, str, str]],
+    *,
+    title: str,
+    empty_hint: str,
+) -> str:
     if not rows:
         return (
             f"{title}\n\n"
-            "В графике нет будущих дат стартов для выбранного фильтра.\n\n"
+            f"{empty_hint}\n\n"
             "_Данные из блока «График стартов» дашборда._"
         )
 
@@ -312,21 +381,47 @@ def _format_upcoming_starts(message: str) -> str:
     return "\n".join(lines)
 
 
-def _format_campus_starts(campus: dict[str, Any]) -> str:
-    rows = _collect_start_dates([campus], limit=12)
-    name = campus.get("campus") or "—"
-    if not rows:
-        return (
-            f"**График стартов — {name}**\n\n"
-            "Будущих дат стартов бассейна в данных нет.\n\n"
-            "_Данные из блока «График стартов» дашборда._"
-        )
+def _format_upcoming_starts(message: str) -> str:
+    q = message.lower()
+    campuses = find_campuses_in_query(message)
+    month = _parse_month_from_query(q)
+    year = _parse_year_from_query(q)
+    rows = _collect_start_dates(
+        campuses or None,
+        future_only=month is None,
+        month=month,
+        year=year,
+        limit=20,
+    )
+    title = _schedule_title(campuses=campuses or None, month=month, year=year)
+    if month is not None:
+        month_label = MONTH_NAMES_PREP.get(month, str(month))
+        empty_hint = f"В графике нет стартов в {month_label}{f' {year}' if year else ''}."
+    else:
+        empty_hint = "В графике нет будущих дат стартов для выбранного фильтра."
+    return _format_schedule_rows(rows, title=title, empty_hint=empty_hint)
 
-    lines = [f"**График стартов — {name}**", ""]
-    for parsed, _, raw in rows:
-        lines.append(f"- **{raw}** ({_days_label(parsed)})")
-    lines.extend(["", "_Данные из блока «График стартов» дашборда._"])
-    return "\n".join(lines)
+
+def _format_campus_starts(campus: dict[str, Any], message: str) -> str:
+    q = message.lower()
+    month = _parse_month_from_query(q)
+    year = _parse_year_from_query(q)
+    rows = _collect_start_dates(
+        [campus],
+        future_only=month is None,
+        month=month,
+        year=year,
+        limit=20,
+    )
+    name = campus.get("campus") or "—"
+    if month is not None:
+        month_label = MONTH_NAMES_PREP.get(month, str(month))
+        title = f"**Старты бассейнов в {month_label}{f' {year}' if year else ''} — {name}**"
+        empty_hint = f"В графике нет стартов в {month_label}{f' {year}' if year else ''} для кампуса {name}."
+    else:
+        title = f"**График стартов — {name}**"
+        empty_hint = f"Будущих дат стартов бассейна для кампуса {name} в данных нет."
+    return _format_schedule_rows(rows, title=title, empty_hint=empty_hint)
 
 
 def try_local_answer(message: str) -> tuple[str, bool] | None:
@@ -364,7 +459,7 @@ def try_local_answer(message: str) -> tuple[str, bool] | None:
     if SCHEDULE_QUERY_RE.search(q):
         campuses = find_campuses_in_query(message)
         if campuses and len(campuses) == 1:
-            return _format_campus_starts(campuses[0]), False
+            return _format_campus_starts(campuses[0], message), False
         return _format_upcoming_starts(message), False
 
     campuses = find_campuses_in_query(message)

@@ -125,20 +125,67 @@ def _parse_ru_date(raw: str) -> date | None:
         return None
 
 
-def _schedule_overview(data: dict[str, Any], *, limit: int = 15) -> str:
+MONTH_STEMS: list[tuple[int, tuple[str, ...]]] = [
+    (1, ("январ", "янв")),
+    (2, ("феврал", "фев")),
+    (3, ("март", "мар")),
+    (4, ("апрел", "апр")),
+    (5, ("май", "мая")),
+    (6, ("июн",)),
+    (7, ("июл",)),
+    (8, ("август", "авг")),
+    (9, ("сентябр", "сен")),
+    (10, ("октябр", "окт")),
+    (11, ("ноябр", "ноя")),
+    (12, ("декабр", "дек")),
+]
+
+
+def _parse_month_from_query(q: str) -> int | None:
+    for month_num, stems in MONTH_STEMS:
+        if any(stem in q for stem in stems):
+            return month_num
+    m = re.search(r"\b(0?[1-9]|1[0-2])\s*(?:-?й\s+)?(?:месяц|мес)\b", q)
+    if m:
+        return int(m.group(1))
+    return None
+
+
+def _schedule_overview(
+    data: dict[str, Any],
+    *,
+    user_message: str = "",
+    limit: int = 15,
+) -> str:
     today = date.today()
+    q = user_message.lower()
+    month = _parse_month_from_query(q)
+    year_m = re.search(r"\b(20\d{2})\b", q)
+    year = int(year_m.group(1)) if year_m else None
     rows: list[tuple[date, str, str]] = []
     for campus in data.get("campuses") or []:
         name = campus.get("campus") or "—"
         for dates in (campus.get("schedule") or {}).values():
             for raw in dates:
                 parsed = _parse_ru_date(raw)
-                if parsed and parsed >= today:
-                    rows.append((parsed, name, raw))
+                if not parsed:
+                    continue
+                if month is not None and parsed.month != month:
+                    continue
+                if year is not None and parsed.year != year:
+                    continue
+                if month is None and parsed < today:
+                    continue
+                rows.append((parsed, name, raw))
     rows.sort(key=lambda row: (row[0], row[1]))
     if not rows:
+        if month is not None:
+            return f"Старты бассейнов в месяце {month}: нет дат в данных."
         return "Ближайшие старты бассейнов: нет будущих дат в данных."
-    lines = ["Ближайшие старты бассейнов по сети:"]
+    if month is not None:
+        lines = [f"Старты бассейнов в месяце {month} по сети:"]
+    else:
+        lines = ["Ближайшие старты бассейнов по сети:"]
     for parsed, name, raw in rows[:limit]:
         lines.append(f"- {raw} — {name}")
     return "\n".join(lines)
@@ -287,7 +334,7 @@ def build_context(
         f"жёлтая до {data['norms']['csiCustomer']['yellow']}",
         f"- CSI участников: красная < {data['norms']['csiParticipants']['red']}",
         "",
-        _schedule_overview(data),
+        _schedule_overview(data, user_message=user_message),
     ]
     if active_section:
         parts.extend(["", f"Пользователь сейчас на вкладке: {SECTION_LABELS.get(active_section, active_section)}"])
