@@ -1,0 +1,2001 @@
+{
+  "updatedAt": "2026-06-18",
+  "campuses": [
+    {
+      "campus": "Москва",
+      "foundationDate": "20.08.2018",
+      "workplaces": 760,
+      "campusType": "филиал",
+      "totalArea": "6500",
+      "usableArea": "4900",
+      "dormitory": "нет",
+      "accessControl": "да",
+      "clustersCount": 9,
+      "clusterSeatsDetail": "Galaxy - 134  \nOxygen - 138 \nSupernova - 54 \nVoid - 52 \nAtlantis - 18 \nIllusion - 59 \nMirage - 138\nOasis - 87 \nDune - 80",
+      "armDetail": "Galaxy - 134\nOxygen - 138 \nSupernova - 54\nVoid - 52 \nAtlantis - 18 \nIllusion - 59  \nMirage - 138  \nOasis - 87 \nDune - 80",
+      "flipcharts": 19,
+      "whiteboards": 12,
+      "intensiveTables": 57,
+      "legalName": "АНО \"Школа21\"",
+      "founder": "ПАО Сбербанк",
+      "taxSystem": "ОСНО",
+      "vat": "нет",
+      "educationLicense": "Да",
+      "csiParticipants": 4.42,
+      "directorName": "Директор 1",
+      "directorEmail": "почта 1",
+      "directorBirthday": "01.06.1985",
+      "id": "москва",
+      "workplacesRaw": "760 рм",
+      "accessControlBool": true,
+      "educationLicenseBool": true,
+      "poolParticipants": 26000,
+      "eventsCount": 18,
+      "graduates": 1750,
+      "activeCoreParticipants": 3300,
+      "wauMauRatio": 0.5,
+      "mau": 1350,
+      "internshipsCount": 1750,
+      "eventVisitors": 2400,
+      "periods": {
+        "2026-06": {
+          "activeCoreParticipants": 3153,
+          "poolParticipants": 25138,
+          "graduates": 1678,
+          "mau": 1311,
+          "wauMauRatio": 0.48,
+          "eventsCount": 16,
+          "eventVisitors": 2301,
+          "internshipsCount": 1666
+        },
+        "2026-07": {
+          "activeCoreParticipants": 3300,
+          "poolParticipants": 26000,
+          "graduates": 1750,
+          "mau": 1350,
+          "wauMauRatio": 0.5,
+          "eventsCount": 18,
+          "eventVisitors": 2400,
+          "internshipsCount": 1750
+        }
+      },
+      "schedule": {
+        "1": [],
+        "2": [
+          "09.02.2026"
+        ],
+        "3": [
+          "02.03.2026",
+          "23.03.2026"
+        ],
+        "4": [
+          "20.04.2026"
+        ],
+        "5": [
+          "18.05.2026"
+        ],
+        "6": [
+          "08.06.2026",
+          "22.06.2026"
+        ],
+        "7": [
+          "06.07.2026",
+          "20.07.2026"
+        ],
+        "8": [
+          "17.08.2026",
+          "31.08.2026"
+        ],
+        "9": [
+          "14.09.2026",
+          "28.09.2026"
+        ],
+        "10": [
+          "12.10.2026",
+          "26.10.2026"
+        ],
+        "11": [
+          "09.11.2026",
+          "23.11.2026"
+        ],
+        "12": [
+          "07.12.2026"
+        ]
+      },
+      "address": "г. Москва, ул. Вятская, д. 27, стр. 42",
+      "conferenceHall": "Атриум - 150\nКонференц-зал Акселератор - 70 максимум, комфортно 50",
+      "legalForm": "АНО",
+      "campusAgeText": "7 лет, 9 месяцев"
+    },
+    {
+      "campus": "Казань",
+      "foundationDate": "06.02.2020",
+      "workplaces": 453,
+      "campusType": "филиал",
+      "totalArea": "3379",
+      "usableArea": "3326",
+      "dormitory": "251 место/34 номера",
+      "accessControl": "да",
+      "clustersCount": 7,
+      "clusterSeatsDetail": "Evolution - 93\nSingularity - 81\nEternity - 80\n\nUniverse - 50\nProgress - 71 \nGenom - 68 \n\nVault - 49\n\nМест для самостоятельно работы суммарно: 58",
+      "armDetail": "Evolution - 93\nSingularity - 81\nEternity - 80\n\nUniverse - 50\nProgress - 71 \nGenom - 68 \n\nVault - 49",
+      "flipcharts": 5,
+      "whiteboards": 6,
+      "intensiveTables": 15,
+      "legalName": "АНО \"Школа21\"",
+      "founder": "ПАО Сбербанк",
+      "taxSystem": "ОСНО",
+      "vat": "нет",
+      "educationLicense": "Да",
+      "csiCustomer": 4.9,
+      "csiParticipants": 4.44,
+      "directorName": "Директор 2",
+      "directorEmail": "почта 2",
+      "directorBirthday": "02.06.1985",
+      "id": "казань",
+      "workplacesRaw": "453 рм",
+      "accessControlBool": true,
+      "educationLicenseBool": true,
+      "poolParticipants": 12500,
+      "eventsCount": 6,
+      "graduates": 680,
+      "activeCoreParticipants": 1200,
+      "wauMauRatio": 0.55,
+      "mau": 560,
+      "internshipsCount": 760,
+      "eventVisitors": 520,
+      "periods": {
+        "2026-06": {
+          "activeCoreParticipants": 1161,
+          "poolParticipants": 12168,
+          "graduates": 654,
+          "mau": 544,
+          "wauMauRatio": 0.53,
+          "eventsCount": 5,
+          "eventVisitors": 494,
+          "internshipsCount": 731
+        },
+        "2026-07": {
+          "activeCoreParticipants": 1200,
+          "poolParticipants": 12500,
+          "graduates": 680,
+          "mau": 560,
+          "wauMauRatio": 0.55,
+          "eventsCount": 6,
+          "eventVisitors": 520,
+          "internshipsCount": 760
+        }
+      },
+      "schedule": {
+        "1": [],
+        "2": [
+          "02.02.2026",
+          "23.02.2026"
+        ],
+        "3": [
+          "16.03.2026"
+        ],
+        "4": [],
+        "5": [],
+        "6": [
+          "01.06.2026",
+          "22.06.2026"
+        ],
+        "7": [
+          "06.07.2026",
+          "20.07.2026"
+        ],
+        "8": [
+          "31.08.2026"
+        ],
+        "9": [
+          "21.09.2026"
+        ],
+        "10": [
+          "12.10.2026"
+        ],
+        "11": [],
+        "12": []
+      },
+      "address": "г. Казань, ул. Спартаковская, д. 2, корп. 2",
+      "conferenceHall": "150 комфортно\n200 возможно",
+      "legalForm": "не указана",
+      "campusAgeText": "6 лет, 4 месяцев"
+    },
+    {
+      "campus": "Новосибирск",
+      "foundationDate": "21.07.2021",
+      "workplaces": 390,
+      "campusType": "филиал",
+      "totalArea": "2325",
+      "usableArea": "1640",
+      "dormitory": "нет",
+      "accessControl": "да",
+      "clustersCount": 8,
+      "clusterSeatsDetail": "Tranquility - 53 \nClarity - 42\nSerenity - 65\nGenesis - 59\nPresense - 42\nExistense - 27\nInfinity - 59 \nSilence - 42",
+      "armDetail": "Tranquility - 53 \nClarity - 42\nSerenity - 65\nGenesis - 59\nPresense - 42\nExistense - 27\nInfinity - 59 \nSilence - 42",
+      "flipcharts": 5,
+      "whiteboards": 1,
+      "intensiveTables": 1,
+      "legalName": "АНО \"Школа21\"",
+      "founder": "ПАО Сбербанк",
+      "taxSystem": "ОСНО",
+      "vat": "нет",
+      "educationLicense": "Да",
+      "csiCustomer": 5.0,
+      "csiParticipants": 4.53,
+      "directorName": "Директор 3",
+      "directorEmail": "почта 3",
+      "directorBirthday": "03.06.1985",
+      "id": "новосибирск",
+      "workplacesRaw": "390 рм",
+      "accessControlBool": true,
+      "educationLicenseBool": true,
+      "poolParticipants": 9500,
+      "eventsCount": 4,
+      "graduates": 400,
+      "activeCoreParticipants": 980,
+      "wauMauRatio": 0.45,
+      "mau": 430,
+      "internshipsCount": 600,
+      "eventVisitors": 140,
+      "periods": {
+        "2026-06": {
+          "activeCoreParticipants": 1005,
+          "poolParticipants": 9780,
+          "graduates": 389,
+          "mau": 441,
+          "wauMauRatio": 0.47,
+          "eventsCount": 5,
+          "eventVisitors": 128,
+          "internshipsCount": 582
+        },
+        "2026-07": {
+          "activeCoreParticipants": 980,
+          "poolParticipants": 9500,
+          "graduates": 400,
+          "mau": 430,
+          "wauMauRatio": 0.45,
+          "eventsCount": 4,
+          "eventVisitors": 140,
+          "internshipsCount": 600
+        }
+      },
+      "schedule": {
+        "1": [],
+        "2": [
+          "02.02.2026"
+        ],
+        "3": [
+          "02.03.2026"
+        ],
+        "4": [],
+        "5": [],
+        "6": [
+          "01.06.2026",
+          "22.06.2026"
+        ],
+        "7": [
+          "13.07.2026"
+        ],
+        "8": [],
+        "9": [
+          "21.09.2026"
+        ],
+        "10": [
+          "12.10.2026"
+        ],
+        "11": [],
+        "12": []
+      },
+      "address": "г. Новосибирск, пл. Карла Маркса, д. 7",
+      "conferenceHall": "100 (Зал у 2 ГИС)",
+      "legalForm": "не указана",
+      "campusAgeText": "4 лет, 10 месяцев"
+    },
+    {
+      "campus": "Сургут",
+      "foundationDate": "03.04.2023",
+      "workplaces": 190,
+      "campusType": "франшиза",
+      "totalArea": "3080",
+      "usableArea": "1907",
+      "dormitory": "общежитие от университета, 10 мест под основу и на бассейны 5-10 мест",
+      "accessControl": "да",
+      "clustersCount": 3,
+      "clusterSeatsDetail": "Hydrogen - 72\nCarbon - 72\nSulfur - 47",
+      "conferenceHall": "200",
+      "armDetail": "Hydrogen - 72\nCarbon - 72\nSulfur - 47",
+      "flipcharts": 0,
+      "whiteboards": 15,
+      "intensiveTables": 8,
+      "legalName": "АВТОНОМНАЯ НЕКОММЕРЧЕСКАЯ\nОРГАНИЗАЦИЯ ПОВЫШЕНИЯ УРОВНЯ\nКАЧЕСТВА ОБРАЗОВАНИЯ\nНАСЕЛЕНИЯ \"ШКОЛА 21. ЮГРА\"",
+      "founder": "Департамент по управлению государственным имуществом Ханты-Мансийского автономного округа - Югры",
+      "taxSystem": "УСН",
+      "vat": "Нет",
+      "vatReason": "НДС не платим, так как работаем за счет целевой субсидии (НДС уплачивается только за аренду помещения в размере 1 рубля)",
+      "educationLicense": "Да",
+      "csiCustomer": 5.0,
+      "csiParticipants": 4.33,
+      "directorName": "Директор 4",
+      "directorEmail": "почта 4",
+      "directorBirthday": "04.06.1985",
+      "id": "сургут",
+      "workplacesRaw": "190 рм",
+      "accessControlBool": true,
+      "educationLicenseBool": true,
+      "poolParticipants": 2750,
+      "eventsCount": 8,
+      "graduates": 50,
+      "activeCoreParticipants": 250,
+      "wauMauRatio": 0.58,
+      "mau": 80,
+      "internshipsCount": 80,
+      "eventVisitors": 45,
+      "periods": {
+        "2026-06": {
+          "activeCoreParticipants": 241,
+          "poolParticipants": 2689,
+          "graduates": 44,
+          "mau": 76,
+          "wauMauRatio": 0.56,
+          "eventsCount": 7,
+          "eventVisitors": 41,
+          "internshipsCount": 75
+        },
+        "2026-07": {
+          "activeCoreParticipants": 250,
+          "poolParticipants": 2750,
+          "graduates": 50,
+          "mau": 80,
+          "wauMauRatio": 0.58,
+          "eventsCount": 8,
+          "eventVisitors": 45,
+          "internshipsCount": 80
+        }
+      },
+      "schedule": {
+        "1": [
+          "26.01.2026"
+        ],
+        "2": [
+          "16.02.2026"
+        ],
+        "3": [
+          "16.03.2026"
+        ],
+        "4": [],
+        "5": [
+          "18.05.2026"
+        ],
+        "6": [
+          "29.06.2026"
+        ],
+        "7": [],
+        "8": [
+          "10.08.2026"
+        ],
+        "9": [
+          "07.09.2026"
+        ],
+        "10": [],
+        "11": [],
+        "12": []
+      },
+      "address": "г. Сургут, ул. Иосифа Каролинского, д. 14/1",
+      "legalForm": "прочее",
+      "campusAgeText": "3 лет, 2 месяцев"
+    },
+    {
+      "campus": "Великий Новгород",
+      "foundationDate": "18.09.2023",
+      "workplaces": 191,
+      "campusType": "франшиза",
+      "totalArea": "1728,5",
+      "usableArea": "1728,5",
+      "dormitory": "до 50+ собственность НовГУ",
+      "accessControl": "да",
+      "clustersCount": 3,
+      "clusterSeatsDetail": "Quark - 114\nLepton - 42\nBoson - 35",
+      "armDetail": "Quark - 114\nLepton - 42\nBoson - 35",
+      "flipcharts": 8,
+      "whiteboards": 13,
+      "legalName": "Структурное подразделение Новгородского государственного университета имени Ярослава Мудрого",
+      "taxSystem": "ОСНО",
+      "educationLicense": "Да",
+      "csiCustomer": 4.5,
+      "csiParticipants": 4.21,
+      "directorName": "Директор 5",
+      "directorEmail": "почта 5",
+      "directorBirthday": "05.06.1985",
+      "id": "великий-новгород",
+      "workplacesRaw": "191 рм",
+      "accessControlBool": true,
+      "educationLicenseBool": true,
+      "poolParticipants": 2400,
+      "eventsCount": 95,
+      "graduates": 30,
+      "activeCoreParticipants": 410,
+      "wauMauRatio": 0.42,
+      "mau": 55,
+      "internshipsCount": 75,
+      "eventVisitors": 580,
+      "periods": {
+        "2026-06": {
+          "activeCoreParticipants": 422,
+          "poolParticipants": 2428,
+          "graduates": 24,
+          "mau": 53,
+          "wauMauRatio": 0.39,
+          "eventsCount": 90,
+          "eventVisitors": 562,
+          "internshipsCount": 70
+        },
+        "2026-07": {
+          "activeCoreParticipants": 410,
+          "poolParticipants": 2400,
+          "graduates": 30,
+          "mau": 55,
+          "wauMauRatio": 0.42,
+          "eventsCount": 95,
+          "eventVisitors": 580,
+          "internshipsCount": 75
+        }
+      },
+      "schedule": {
+        "1": [],
+        "2": [
+          "16.02.2026"
+        ],
+        "3": [
+          "16.03.2026"
+        ],
+        "4": [],
+        "5": [],
+        "6": [
+          "08.06.2026"
+        ],
+        "7": [
+          "06.07.2026"
+        ],
+        "8": [
+          "10.08.2026"
+        ],
+        "9": [
+          "28.10.2026"
+        ],
+        "10": [
+          "12.10.2026"
+        ],
+        "11": [],
+        "12": []
+      },
+      "address": "г. Великий Новгород, ул. Великая, д. 18А",
+      "conferenceHall": "Пользуемся конференц залом университета: Амфитеатр на 300, Зал Трансформер на 100-3000 и аудитории на 50-100.\nНо это все по договоренностям и только если они не заняты мероприятиями",
+      "legalForm": "Структурное подразделение",
+      "campusAgeText": "2 лет, 8 месяцев"
+    },
+    {
+      "campus": "Якутск",
+      "foundationDate": "09.11.2023",
+      "workplaces": 198,
+      "campusType": "франшиза",
+      "totalArea": "1945",
+      "usableArea": "1750,66",
+      "dormitory": "нет",
+      "accessControl": "да",
+      "clustersCount": 4,
+      "clusterSeatsDetail": "Ayar - 48; \nErchim - 49; \nSitim -45;\n Tuskul -56",
+      "conferenceHall": "150",
+      "armDetail": "второй этаж - 97; \nтретий этаж 101",
+      "flipcharts": 2,
+      "whiteboards": 10,
+      "intensiveTables": 10,
+      "legalName": "Автономная некоммерческая организация развития системы подготовки кадров в ИТ-сфере «Школа 21. Якутия»",
+      "founder": "Министерство инноваций, цифрового развития и инфокоммуникационных технологий Республики Саха (Якутия)",
+      "taxSystem": "УСН",
+      "vat": "Нет",
+      "vatReason": "В связи с применением УСН",
+      "educationLicense": "Да",
+      "csiCustomer": 5.0,
+      "csiParticipants": 4.27,
+      "directorName": "Директор 6",
+      "directorEmail": "почта 6",
+      "directorBirthday": "06.06.1985",
+      "id": "якутск",
+      "workplacesRaw": "198 рм",
+      "accessControlBool": true,
+      "educationLicenseBool": true,
+      "poolParticipants": 2400,
+      "eventsCount": 2,
+      "graduates": 28,
+      "activeCoreParticipants": 360,
+      "wauMauRatio": 0.55,
+      "mau": 120,
+      "internshipsCount": 130,
+      "eventVisitors": 30,
+      "periods": {
+        "2026-06": {
+          "activeCoreParticipants": 343,
+          "poolParticipants": 2319,
+          "graduates": 25,
+          "mau": 111,
+          "wauMauRatio": 0.56,
+          "eventsCount": 1,
+          "eventVisitors": 27,
+          "internshipsCount": 122
+        },
+        "2026-07": {
+          "activeCoreParticipants": 360,
+          "poolParticipants": 2400,
+          "graduates": 28,
+          "mau": 120,
+          "wauMauRatio": 0.55,
+          "eventsCount": 2,
+          "eventVisitors": 30,
+          "internshipsCount": 130
+        }
+      },
+      "schedule": {
+        "1": [],
+        "2": [
+          "02.02.2026"
+        ],
+        "3": [
+          "02.03.2026",
+          "23.03.2026"
+        ],
+        "4": [],
+        "5": [
+          "25.05.2026"
+        ],
+        "6": [],
+        "7": [],
+        "8": [],
+        "9": [
+          "14.09.2026"
+        ],
+        "10": [
+          "12.10.2026"
+        ],
+        "11": [],
+        "12": []
+      },
+      "address": "г. Якутск, ул. Ойунского, д. 35",
+      "legalForm": "прочее",
+      "campusAgeText": "2 лет, 7 месяцев"
+    },
+    {
+      "campus": "Самарканд",
+      "foundationDate": "21.12.2023",
+      "workplaces": 500,
+      "campusType": "франшиза",
+      "totalArea": "4000",
+      "usableArea": "3200",
+      "dormitory": "вместимость на \n178 мест,",
+      "accessControl": "нет",
+      "clustersCount": 4,
+      "clusterSeatsDetail": "1.Registan-127\n2. Ulug'bek -125\n3. Sherdor -125\n4. Tiila-Kori -125",
+      "conferenceHall": "120",
+      "armDetail": "502",
+      "flipcharts": 2,
+      "whiteboards": 8,
+      "intensiveTables": 9,
+      "legalName": "Негосударственное образовательное учреждение «SHKOLA 21»",
+      "founder": "Учредитель: Ходзидакис Николай Василис.",
+      "taxSystem": "ОСНО",
+      "vat": "До 01.08.2025 г являлись плательщиками НДС, а после освобождены от НДС. НДС нет в 2026 г.",
+      "vatReason": "Резиденты Технологического парка программных продуктов и информационных технологий (IT-парк)",
+      "educationLicense": "Да",
+      "csiCustomer": 4.7,
+      "csiParticipants": 4.52,
+      "directorName": "Директор 7",
+      "directorEmail": "почта 7",
+      "directorBirthday": "07.06.1985",
+      "id": "самарканд",
+      "workplacesRaw": "500 рм",
+      "accessControlBool": false,
+      "educationLicenseBool": true,
+      "poolParticipants": 4800,
+      "eventsCount": 8,
+      "graduates": 25,
+      "activeCoreParticipants": 650,
+      "wauMauRatio": 0.7,
+      "mau": 330,
+      "internshipsCount": 70,
+      "eventVisitors": 50,
+      "periods": {
+        "2026-06": {
+          "activeCoreParticipants": 633,
+          "poolParticipants": 4611,
+          "graduates": 21,
+          "mau": 315,
+          "wauMauRatio": 0.71,
+          "eventVisitors": 0,
+          "internshipsCount": 63
+        },
+        "2026-07": {
+          "activeCoreParticipants": 650,
+          "poolParticipants": 4800,
+          "graduates": 25,
+          "mau": 330,
+          "wauMauRatio": 0.7,
+          "eventsCount": 8,
+          "eventVisitors": 50,
+          "internshipsCount": 70
+        }
+      },
+      "address": "Узбекистан, г. Самарканд, ул. Ибн Сино, 17а",
+      "legalForm": "прочее",
+      "campusAgeText": "2 лет, 5 месяцев"
+    },
+    {
+      "campus": "Ярославль",
+      "foundationDate": "01.02.2024",
+      "workplaces": 300,
+      "campusType": "франшиза",
+      "totalArea": "2490,1",
+      "usableArea": "2171,15",
+      "dormitory": "отсутствует",
+      "accessControl": "да",
+      "clustersCount": 4,
+      "clusterSeatsDetail": "Mydriy - 84\nUshakov - 96\nTkachenko - 84\nVolkov - 35",
+      "conferenceHall": "130",
+      "armDetail": "Mydriy - 84\nUshakov - 96\nTkachenko - 84\nVolkov - 35",
+      "flipcharts": 4,
+      "whiteboards": 4,
+      "intensiveTables": 10,
+      "legalName": "Автономная некоммерческая организация повышения уровня качества образования населения \"Школа 21. Ярославия\"",
+      "founder": "Министерство цифрового развития Ярославской области",
+      "taxSystem": "ОСНО",
+      "vat": "Да",
+      "educationLicense": "Да",
+      "csiCustomer": 4.8,
+      "csiParticipants": 4.18,
+      "directorName": "Директор 8",
+      "directorEmail": "почта 8",
+      "directorBirthday": "08.06.1985",
+      "id": "ярославль",
+      "workplacesRaw": "300 рм",
+      "accessControlBool": true,
+      "educationLicenseBool": true,
+      "poolParticipants": 2350,
+      "eventsCount": 10,
+      "graduates": 22,
+      "activeCoreParticipants": 420,
+      "wauMauRatio": 0.43,
+      "mau": 130,
+      "internshipsCount": 65,
+      "eventVisitors": 1150,
+      "periods": {
+        "2026-06": {
+          "activeCoreParticipants": 410,
+          "poolParticipants": 2302,
+          "graduates": 21,
+          "mau": 128,
+          "wauMauRatio": 0.4,
+          "eventsCount": 9,
+          "eventVisitors": 1127,
+          "internshipsCount": 61
+        },
+        "2026-07": {
+          "activeCoreParticipants": 420,
+          "poolParticipants": 2350,
+          "graduates": 22,
+          "mau": 130,
+          "wauMauRatio": 0.43,
+          "eventsCount": 10,
+          "eventVisitors": 1150,
+          "internshipsCount": 65
+        }
+      },
+      "schedule": {
+        "1": [],
+        "2": [
+          "09.02.2026"
+        ],
+        "3": [
+          "23.03.2026"
+        ],
+        "4": [],
+        "5": [],
+        "6": [
+          "08.06.2026",
+          "29.06.2026"
+        ],
+        "7": [],
+        "8": [],
+        "9": [
+          "14.09.2026"
+        ],
+        "10": [
+          "12.10.2026"
+        ],
+        "11": [],
+        "12": []
+      },
+      "address": "г. Ярославль, ул. Победы, д. 14А",
+      "legalForm": "прочее",
+      "campusAgeText": "2 лет, 4 месяцев"
+    },
+    {
+      "campus": "Магас",
+      "foundationDate": "19.02.2024",
+      "workplaces": 250,
+      "campusType": "франшиза",
+      "totalArea": "3560",
+      "usableArea": "3200",
+      "dormitory": "предоставляется\n40 мест \nв  отеле инвестора",
+      "accessControl": "да",
+      "clustersCount": 4,
+      "clusterSeatsDetail": "Ezdel - 77\nTesham- 54\nDenal - 75\nSabar- 42",
+      "conferenceHall": "250",
+      "armDetail": "Ezdel - 77\nTesham- 54\nDenal - 75\nSabar- 42",
+      "flipcharts": 1,
+      "whiteboards": 10,
+      "intensiveTables": 10,
+      "legalName": "Автономная некоммерческая организация дополнительного профессионального образования «Академия Информационных Технологий»",
+      "founder": "АО «А101 Девелопмент»",
+      "taxSystem": "УСН",
+      "vat": "Да",
+      "vatReason": "НДС 5% в 2026 году",
+      "educationLicense": "Да",
+      "csiParticipants": 4.52,
+      "directorName": "Директор 9",
+      "directorEmail": "почта 9",
+      "directorBirthday": "09.06.1985",
+      "id": "магас",
+      "workplacesRaw": "250 рм",
+      "accessControlBool": true,
+      "educationLicenseBool": true,
+      "poolParticipants": 2450,
+      "eventsCount": 2,
+      "graduates": 15,
+      "activeCoreParticipants": 560,
+      "wauMauRatio": 0.6,
+      "mau": 350,
+      "internshipsCount": 165,
+      "eventVisitors": 120,
+      "periods": {
+        "2026-06": {
+          "activeCoreParticipants": 576,
+          "poolParticipants": 2500,
+          "graduates": 11,
+          "mau": 360,
+          "wauMauRatio": 0.61,
+          "eventsCount": 0,
+          "eventVisitors": 110,
+          "internshipsCount": 157
+        },
+        "2026-07": {
+          "activeCoreParticipants": 560,
+          "poolParticipants": 2450,
+          "graduates": 15,
+          "mau": 350,
+          "wauMauRatio": 0.6,
+          "eventsCount": 2,
+          "eventVisitors": 120,
+          "internshipsCount": 165
+        }
+      },
+      "schedule": {
+        "1": [],
+        "2": [
+          "02.02.2026"
+        ],
+        "3": [
+          "30.03.2026"
+        ],
+        "4": [],
+        "5": [],
+        "6": [],
+        "7": [
+          "06.07.2026"
+        ],
+        "8": [
+          "10.08.2026"
+        ],
+        "9": [
+          "14.09.2026"
+        ],
+        "10": [
+          "12.10.2026"
+        ],
+        "11": [],
+        "12": []
+      },
+      "address": "г. Магас, ул. Никиты Хрущева, д. 10",
+      "legalForm": "прочее",
+      "campusAgeText": "2 лет, 3 месяцев"
+    },
+    {
+      "campus": "Белгород",
+      "foundationDate": "11.03.2024",
+      "workplaces": 204,
+      "campusType": "франшиза",
+      "totalArea": "2740",
+      "usableArea": "1760",
+      "dormitory": "да (до 10 мест в гостинице)",
+      "accessControl": "да",
+      "clustersCount": 3,
+      "clusterSeatsDetail": "Валуй - 54\nОскол - 77\nНежеголь - 73",
+      "conferenceHall": "130",
+      "armDetail": "Валуй - 54\nОскол - 77\nНежеголь - 73",
+      "flipcharts": 6,
+      "whiteboards": 0,
+      "intensiveTables": 8,
+      "legalName": "Автономная некоммерческая организация «Центр современных технологий и систем»",
+      "founder": "Учредителем АНО является Белгородская область. Полномочия учредителя осуществляет министерство цифрового развития Белгородской области",
+      "taxSystem": "ОСНО",
+      "vat": "Нет",
+      "vatReason": "В связи с лицензией на образовательную деятельность, поэтому договора на обучение НДС не облагаются",
+      "educationLicense": "Да",
+      "csiCustomer": 4.42,
+      "csiParticipants": 4.34,
+      "directorName": "Директор 10",
+      "directorEmail": "почта 10",
+      "directorBirthday": "10.06.1985",
+      "id": "белгород",
+      "workplacesRaw": "204 рм",
+      "accessControlBool": true,
+      "educationLicenseBool": true,
+      "poolParticipants": 2100,
+      "eventsCount": 2,
+      "graduates": 12,
+      "activeCoreParticipants": 315,
+      "wauMauRatio": 0.44,
+      "mau": 155,
+      "internshipsCount": 55,
+      "eventVisitors": 1000,
+      "periods": {
+        "2026-06": {
+          "activeCoreParticipants": 315,
+          "poolParticipants": 2016,
+          "graduates": 11,
+          "mau": 148,
+          "wauMauRatio": 0.41,
+          "eventsCount": 1,
+          "eventVisitors": 958,
+          "internshipsCount": 51
+        },
+        "2026-07": {
+          "activeCoreParticipants": 315,
+          "poolParticipants": 2100,
+          "graduates": 12,
+          "mau": 155,
+          "wauMauRatio": 0.44,
+          "eventsCount": 2,
+          "eventVisitors": 1000,
+          "internshipsCount": 55
+        }
+      },
+      "schedule": {
+        "1": [
+          "26.01.2026"
+        ],
+        "2": [],
+        "3": [
+          "02.03.2026"
+        ],
+        "4": [],
+        "5": [
+          "25.05.2026"
+        ],
+        "6": [
+          "22.06.2026"
+        ],
+        "7": [],
+        "8": [
+          "17.08.2026"
+        ],
+        "9": [
+          "14.09.2026"
+        ],
+        "10": [],
+        "11": [],
+        "12": []
+      },
+      "address": "г. Белгород, пр. Ватутина, д. 1Г",
+      "legalForm": "прочее",
+      "campusAgeText": "2 лет, 3 месяцев"
+    },
+    {
+      "campus": "Челябинск",
+      "foundationDate": "30.08.2024",
+      "workplaces": 210,
+      "campusType": "франшиза",
+      "totalArea": "4500",
+      "usableArea": "3690",
+      "dormitory": "да (общежитие ВУЗа на 18 мест",
+      "accessControl": "да",
+      "clustersCount": 3,
+      "clusterSeatsDetail": "Zyuratkul - 70\nTaganay - 70 \nArkaim - 70",
+      "conferenceHall": "120",
+      "armDetail": "Zyuratkul - 70\nTaganay - 70 \nArkaim - 70",
+      "flipcharts": 2,
+      "intensiveTables": 10,
+      "legalName": "Федеральное государственное автономное образовательное учреждение высшего образования «Южно-Уральский государственный университет (национальный исследовательский университет)»\nФГАОУ ВО «ЮУрГУ (НИУ)» Центр по подготовке кадров в сфере информационных технологий \"Школа 21\"",
+      "founder": "Подразделение университета. Учредитель университета - Министерство науки и высшего образования РФ",
+      "taxSystem": "ОСНО",
+      "vat": "Нет",
+      "vatReason": "В связи с лицензией на образовательную деятельность, поэтому договора на обучение НДС не облагаются",
+      "educationLicense": "Да",
+      "csiCustomer": 5.0,
+      "csiParticipants": 4.15,
+      "directorName": "Директор 11",
+      "directorEmail": "почта 11",
+      "directorBirthday": "11.06.1985",
+      "id": "челябинск",
+      "workplacesRaw": "210 рм",
+      "accessControlBool": true,
+      "educationLicenseBool": true,
+      "poolParticipants": 2000,
+      "eventsCount": 1,
+      "graduates": 5,
+      "activeCoreParticipants": 530,
+      "wauMauRatio": 0.5,
+      "mau": 90,
+      "internshipsCount": 35,
+      "eventVisitors": 180,
+      "periods": {
+        "2026-06": {
+          "activeCoreParticipants": 508,
+          "poolParticipants": 2012,
+          "graduates": 2,
+          "mau": 86,
+          "wauMauRatio": 0.48,
+          "eventsCount": 0,
+          "eventVisitors": 176,
+          "internshipsCount": 33
+        },
+        "2026-07": {
+          "activeCoreParticipants": 530,
+          "poolParticipants": 2000,
+          "graduates": 5,
+          "mau": 90,
+          "wauMauRatio": 0.5,
+          "eventsCount": 1,
+          "eventVisitors": 180,
+          "internshipsCount": 35
+        }
+      },
+      "schedule": {
+        "1": [],
+        "2": [
+          "02.02.2026"
+        ],
+        "3": [
+          "02.03.2026",
+          "23.03.2026"
+        ],
+        "4": [],
+        "5": [],
+        "6": [
+          "08.06.2026"
+        ],
+        "7": [],
+        "8": [
+          "17.08.2026"
+        ],
+        "9": [
+          "14.09.2026"
+        ],
+        "10": [
+          "12.10.2026"
+        ],
+        "11": [],
+        "12": []
+      },
+      "address": "г. Челябинск, пр. Ленина, д. 76а",
+      "legalForm": "ФГАОУ ВО",
+      "campusAgeText": "1 лет, 9 месяцев"
+    },
+    {
+      "campus": "Южно-сахалинск",
+      "foundationDate": "06.09.2024",
+      "workplaces": 93,
+      "campusType": "франшиза",
+      "totalArea": "990",
+      "usableArea": "870",
+      "dormitory": "60 мест",
+      "accessControl": "да",
+      "clustersCount": 2,
+      "clusterSeatsDetail": "Анива - 33,\n Таранай - 60",
+      "conferenceHall": "45",
+      "armDetail": "Анива - 33,\n Таранай - 60",
+      "flipcharts": 4,
+      "whiteboards": 4,
+      "intensiveTables": 2,
+      "legalName": "АНО \"НПЦ Крылья Сахалина\" \n АВТОНОМНАЯ НЕКОММЕРЧЕСКАЯ ОРГАНИЗАЦИЯ \"НАУЧНО-ПРОИЗВОДСТВЕННЫЙ ЦЕНТР ИСПЫТАНИЙ И КОМПЕТЕНЦИЙ В СФЕРЕ РАЗВИТИЯ БЕСПИЛОТНЫХ АВИАЦИОННЫХ СИСТЕМ И СРЕДСТВ ЗАЩИТЫ ОТ ИХ ПРОТИВОПРАВНОГО ПРИМЕНЕНИЯ \"КРЫЛЬЯ САХАЛИНА\"",
+      "founder": "Министерство цифрового и технологического развития Сахалинской области",
+      "taxSystem": "ОСНО",
+      "vat": "Да",
+      "educationLicense": "Да",
+      "csiCustomer": 4.3,
+      "csiParticipants": 4.3,
+      "directorName": "Директор 13",
+      "directorEmail": "почта 13",
+      "directorBirthday": "13.06.1985",
+      "id": "южно-сахалинск",
+      "workplacesRaw": "93 рм",
+      "accessControlBool": true,
+      "educationLicenseBool": true,
+      "poolParticipants": 750,
+      "eventsCount": 1,
+      "graduates": 3,
+      "activeCoreParticipants": 130,
+      "wauMauRatio": 0.47,
+      "mau": 45,
+      "internshipsCount": 15,
+      "eventVisitors": 800,
+      "periods": {
+        "2026-06": {
+          "activeCoreParticipants": 121,
+          "poolParticipants": 685,
+          "graduates": 1,
+          "mau": 41,
+          "wauMauRatio": 0.44,
+          "eventsCount": 0,
+          "eventVisitors": 785,
+          "internshipsCount": 11
+        },
+        "2026-07": {
+          "activeCoreParticipants": 130,
+          "poolParticipants": 750,
+          "graduates": 3,
+          "mau": 45,
+          "wauMauRatio": 0.47,
+          "eventsCount": 1,
+          "eventVisitors": 800,
+          "internshipsCount": 15
+        }
+      },
+      "schedule": {
+        "1": [
+          "19.01.2026"
+        ],
+        "2": [
+          "02.02.2026"
+        ],
+        "3": [
+          "02.03.2026",
+          "23.03.2026"
+        ],
+        "4": [],
+        "5": [
+          "25.05.2026"
+        ],
+        "6": [
+          "22.06.2026"
+        ],
+        "7": [],
+        "8": [],
+        "9": [
+          "07.09.2026"
+        ],
+        "10": [
+          "12.10.2026"
+        ],
+        "11": [
+          "16.11.2026"
+        ],
+        "12": []
+      },
+      "address": "г. Южно-Сахалинск, ул. Леонова, д. 38 (БЦ «Айхор»)",
+      "legalForm": "АНО",
+      "campusAgeText": "1 лет, 9 месяцев"
+    },
+    {
+      "campus": "Ташкент",
+      "foundationDate": "02.10.2024",
+      "workplaces": 700,
+      "campusType": "франшиза",
+      "totalArea": "8100",
+      "usableArea": "5592",
+      "dormitory": "100 мест",
+      "accessControl": "нет",
+      "clustersCount": 10,
+      "clusterSeatsDetail": "Bukhara - 56\nKhiva - 73\nSamarkand - 97\nTashkent - 97\nAndijan - 73\nJizzakh - 56\nKokand - 78\nNukus - 49\nShakhrisabz - 49\nTermez - 78",
+      "conferenceHall": "300",
+      "armDetail": "Bukhara - 56\nKhiva - 73\nSamarkand - 97\nTashkent - 97\nAndijan - 73\nJizzakh - 56\nKokand - 78\nNukus - 49\nShakhrisabz - 49\nTermez - 78",
+      "flipcharts": 10,
+      "whiteboards": 7,
+      "intensiveTables": 24,
+      "legalName": "Негосударственное образовательное учреждение «SHKOLA 21»",
+      "founder": "Учредитель: Ходзидакис Николай Василис.",
+      "taxSystem": "ОСНО",
+      "vat": "До 01.08.2025 г являлись плательщиками НДС, а после освобождены от НДС. НДС нет в 2026 г.",
+      "vatReason": "Резиденты Технологического парка программных продуктов и информационных технологий (IT-парк)",
+      "educationLicense": "Да",
+      "csiCustomer": 4.7,
+      "csiParticipants": 4.64,
+      "directorName": "Директор 12",
+      "directorEmail": "почта 12",
+      "directorBirthday": "12.06.1985",
+      "id": "ташкент",
+      "workplacesRaw": "700 рм",
+      "accessControlBool": false,
+      "educationLicenseBool": true,
+      "poolParticipants": 8200,
+      "eventsCount": 6,
+      "graduates": 25,
+      "activeCoreParticipants": 1200,
+      "wauMauRatio": 0.52,
+      "mau": 340,
+      "internshipsCount": 130,
+      "eventVisitors": 80,
+      "periods": {
+        "2026-06": {
+          "activeCoreParticipants": 1150,
+          "poolParticipants": 7939,
+          "graduates": 19,
+          "eventVisitors": 0,
+          "internshipsCount": 122
+        },
+        "2026-07": {
+          "activeCoreParticipants": 1200,
+          "poolParticipants": 8200,
+          "graduates": 25,
+          "mau": 340,
+          "wauMauRatio": 0.52,
+          "eventsCount": 6,
+          "eventVisitors": 80,
+          "internshipsCount": 130
+        }
+      },
+      "address": "Узбекистан, г. Ташкент, ул. Зиёлилар, 13",
+      "legalForm": "прочее",
+      "campusAgeText": "1 лет, 8 месяцев"
+    },
+    {
+      "campus": "Анадырь",
+      "foundationDate": "22.10.2024",
+      "workplaces": 20,
+      "campusType": "франшиза классы",
+      "totalArea": "95",
+      "usableArea": "95",
+      "dormitory": "нет",
+      "accessControl": "нет",
+      "clustersCount": 2,
+      "clusterSeatsDetail": "Aurora - 10 \nBlizzard -10",
+      "conferenceHall": "20",
+      "armDetail": "Aurora - 10 \nBlizzard -10",
+      "flipcharts": 0,
+      "whiteboards": 1,
+      "intensiveTables": 1,
+      "legalName": "ГАПОУ ЧАО \"Чукотский многопрофельный коллежд\"",
+      "founder": "Чукотский многопрофельный коллежд",
+      "taxSystem": "ОСНО",
+      "vat": "Да",
+      "vatReason": "Общая система налогообложения, НДС платим и нам платят",
+      "educationLicense": "Да",
+      "csiCustomer": 4.3,
+      "csiParticipants": 4.43,
+      "directorName": "Директор 14",
+      "directorEmail": "почта 14",
+      "directorBirthday": "14.06.1985",
+      "id": "анадырь",
+      "workplacesRaw": "20 рм",
+      "accessControlBool": false,
+      "educationLicenseBool": true,
+      "poolParticipants": 60,
+      "eventsCount": 2,
+      "graduates": 2,
+      "activeCoreParticipants": 25,
+      "wauMauRatio": 0.45,
+      "mau": 25,
+      "internshipsCount": 5,
+      "eventVisitors": 15,
+      "periods": {
+        "2026-06": {
+          "activeCoreParticipants": 18,
+          "poolParticipants": 48,
+          "graduates": 0,
+          "eventVisitors": 0,
+          "internshipsCount": 0
+        },
+        "2026-07": {
+          "activeCoreParticipants": 25,
+          "poolParticipants": 60,
+          "graduates": 2,
+          "mau": 25,
+          "wauMauRatio": 0.45,
+          "eventsCount": 2,
+          "eventVisitors": 15,
+          "internshipsCount": 5
+        }
+      },
+      "schedule": {
+        "1": [],
+        "2": [],
+        "3": [],
+        "4": [],
+        "5": [],
+        "6": [],
+        "7": [],
+        "8": [],
+        "9": [],
+        "10": [
+          "12.10.2026"
+        ],
+        "11": [],
+        "12": []
+      },
+      "address": "г. Анадырь, ул. Студенческая, д. 3",
+      "legalForm": "прочее",
+      "campusAgeText": "1 лет, 7 месяцев"
+    },
+    {
+      "campus": "Нижний Новгород",
+      "foundationDate": "02.12.2024",
+      "workplaces": 200,
+      "campusType": "франшиза",
+      "totalArea": "3344",
+      "usableArea": "2428,7",
+      "dormitory": "нет",
+      "accessControl": "да",
+      "clustersCount": 4,
+      "clusterSeatsDetail": "KULIBIN- 52\nPOPOV - 50\nSHUKHOV 58\nNEIMARK 40",
+      "conferenceHall": "200",
+      "armDetail": "KULIBIN 52 АРМ\nPOPOV 50 АРМ\nSHUKHOV 58 АРМ\nNEIMARK 40 АРМ",
+      "flipcharts": 3,
+      "whiteboards": 7,
+      "legalName": "Автономная некоммерческая организация «Региональный центр развития системы подготовки кадров в сфере информационных технологий Нижегородской области «Школа 21 Нижний Новгород»",
+      "founder": "Автономная некоммерческая организация «Региональный центр поддержки и координации отечественных цифровых технологий и разработчиков «Горький Тех»",
+      "taxSystem": "УСН",
+      "vat": "Нет",
+      "vatReason": "Не превышен установленный НК РФ лимит доходов.",
+      "educationLicense": "Нет",
+      "csiParticipants": 4.17,
+      "directorName": "Директор 15",
+      "directorEmail": "почта 15",
+      "directorBirthday": "15.06.1985",
+      "id": "нижний-новгород",
+      "workplacesRaw": "200 рм",
+      "accessControlBool": true,
+      "educationLicenseBool": false,
+      "poolParticipants": 2000,
+      "eventsCount": 3,
+      "graduates": 1,
+      "activeCoreParticipants": 370,
+      "wauMauRatio": 0.45,
+      "mau": 110,
+      "internshipsCount": 30,
+      "eventVisitors": 380,
+      "periods": {
+        "2026-06": {
+          "activeCoreParticipants": 378,
+          "poolParticipants": 1988,
+          "graduates": 0,
+          "mau": 108,
+          "wauMauRatio": 0.43,
+          "eventsCount": 2,
+          "eventVisitors": 369,
+          "internshipsCount": 27
+        },
+        "2026-07": {
+          "activeCoreParticipants": 370,
+          "poolParticipants": 2000,
+          "graduates": 1,
+          "mau": 110,
+          "wauMauRatio": 0.45,
+          "eventsCount": 3,
+          "eventVisitors": 380,
+          "internshipsCount": 30
+        }
+      },
+      "schedule": {
+        "1": [],
+        "2": [
+          "02.02.2026"
+        ],
+        "3": [
+          "16.03.2026"
+        ],
+        "4": [],
+        "5": [],
+        "6": [
+          "08.06.2026"
+        ],
+        "7": [
+          "20.07.2026"
+        ],
+        "8": [
+          "31.08.2026"
+        ],
+        "9": [
+          "21.09.2026"
+        ],
+        "10": [
+          "12.10.2026"
+        ],
+        "11": [],
+        "12": []
+      },
+      "address": "г. Нижний Новгород, ул. Тургенева, д. 30",
+      "legalForm": "прочее",
+      "campusAgeText": "1 лет, 6 месяцев"
+    },
+    {
+      "campus": "Магадан",
+      "foundationDate": "24.12.2024",
+      "workplaces": 30,
+      "campusType": "франшиза классы",
+      "totalArea": "261,8",
+      "usableArea": "202,4",
+      "dormitory": "нет",
+      "accessControl": "нет",
+      "clustersCount": 2,
+      "clusterSeatsDetail": "Nykla - 18, \nDukcha - 12",
+      "conferenceHall": "30",
+      "armDetail": "Nykla - 18, \nDukcha - 12",
+      "whiteboards": 3,
+      "legalName": "Автономная некоммерческая организация \"Школа 21. Магадан\"",
+      "founder": "Министерство цифрового развития и связи Магаданской области",
+      "taxSystem": "УСН",
+      "vat": "Нет",
+      "educationLicense": "Нет",
+      "csiParticipants": 3.8,
+      "directorName": "Директор 16",
+      "directorEmail": "почта 16",
+      "directorBirthday": "16.06.1985",
+      "id": "магадан",
+      "workplacesRaw": "30 рм",
+      "accessControlBool": false,
+      "educationLicenseBool": false,
+      "poolParticipants": 170,
+      "eventsCount": 1,
+      "graduates": 1,
+      "activeCoreParticipants": 30,
+      "wauMauRatio": 0.44,
+      "mau": 40,
+      "internshipsCount": 5,
+      "eventVisitors": 130,
+      "periods": {
+        "2026-06": {
+          "activeCoreParticipants": 24,
+          "poolParticipants": 146,
+          "graduates": 0,
+          "eventsCount": 0,
+          "eventVisitors": 118,
+          "internshipsCount": 1
+        },
+        "2026-07": {
+          "activeCoreParticipants": 30,
+          "poolParticipants": 170,
+          "graduates": 1,
+          "mau": 40,
+          "wauMauRatio": 0.44,
+          "eventsCount": 1,
+          "eventVisitors": 130,
+          "internshipsCount": 5
+        }
+      },
+      "schedule": {
+        "1": [],
+        "2": [],
+        "3": [
+          "02.03.2026",
+          "23.03.2026"
+        ],
+        "4": [],
+        "5": [],
+        "6": [
+          "08.06.2026"
+        ],
+        "7": [
+          "20.07.2026"
+        ],
+        "8": [],
+        "9": [
+          "14.09.2026"
+        ],
+        "10": [
+          "12.10.2026"
+        ],
+        "11": [],
+        "12": []
+      },
+      "address": "г. Магадан, ул. Кольцевая, 3/8",
+      "legalForm": "прочее",
+      "campusAgeText": "1 лет, 5 месяцев"
+    },
+    {
+      "campus": "Липецк",
+      "foundationDate": "20.03.2025",
+      "workplaces": 200,
+      "campusType": "франшиза",
+      "totalArea": "3636",
+      "usableArea": "2157,2",
+      "dormitory": "нет",
+      "accessControl": "да",
+      "clustersCount": 4,
+      "clusterSeatsDetail": "Energy-78\n Time-42 \nMind 40 \nExspanse 42",
+      "conferenceHall": "202",
+      "armDetail": "Energy-78 \nTime-42 \nMind 40\n Exspanse 42",
+      "flipcharts": 3,
+      "whiteboards": 2,
+      "intensiveTables": 7,
+      "legalName": "Автономная некоммерческая организация развития цифровых и информационных технологий «Цифровой регион. Липецк»",
+      "founder": "Министерство цифрового развития и искусственного интеллекта Липецкой области",
+      "taxSystem": "УСН",
+      "vat": "да",
+      "vatReason": "НДС с 2026 5%",
+      "educationLicense": "Нет",
+      "csiParticipants": 4.23,
+      "directorName": "Директор 17",
+      "directorEmail": "почта 17",
+      "directorBirthday": "17.06.1985",
+      "id": "липецк",
+      "workplacesRaw": "200 рм",
+      "accessControlBool": true,
+      "educationLicenseBool": false,
+      "poolParticipants": 1300,
+      "eventsCount": 24,
+      "graduates": 8,
+      "activeCoreParticipants": 280,
+      "wauMauRatio": 0.55,
+      "mau": 160,
+      "internshipsCount": 25,
+      "eventVisitors": 420,
+      "periods": {
+        "2026-06": {
+          "activeCoreParticipants": 271,
+          "poolParticipants": 1251,
+          "graduates": 6,
+          "mau": 152,
+          "wauMauRatio": 0.54,
+          "eventsCount": 22,
+          "eventVisitors": 398,
+          "internshipsCount": 23
+        },
+        "2026-07": {
+          "activeCoreParticipants": 280,
+          "poolParticipants": 1300,
+          "graduates": 8,
+          "mau": 160,
+          "wauMauRatio": 0.55,
+          "eventsCount": 24,
+          "eventVisitors": 420,
+          "internshipsCount": 25
+        }
+      },
+      "schedule": {
+        "1": [],
+        "2": [
+          "09.02.2026"
+        ],
+        "3": [
+          "16.03.2026"
+        ],
+        "4": [],
+        "5": [],
+        "6": [],
+        "7": [
+          "06.07.2026"
+        ],
+        "8": [],
+        "9": [
+          "14.09.2026"
+        ],
+        "10": [
+          "12.10.2026"
+        ],
+        "11": [],
+        "12": []
+      },
+      "address": "г. Липецк, ул. Зегеля, д. 1",
+      "legalForm": "прочее",
+      "campusAgeText": "1 лет, 2 месяцев"
+    },
+    {
+      "campus": "Уфа",
+      "foundationDate": "04.06.2025",
+      "workplaces": 408,
+      "campusType": "франшиза",
+      "totalArea": "4603,6",
+      "usableArea": "4157,41",
+      "dormitory": "На этапе строительства (ориентировочное заселение 2027 год)  зарезервировано 450 мест",
+      "accessControl": "нет",
+      "clustersCount": 8,
+      "clusterSeatsDetail": "2 этаж (204):\nKerkis - 38\nVavilov - 56\nMichurin - 72\nKoltsov - 38\n\n3 этаж (204):\nYablochkov - 38\nKorolev - 72\nZhukovsky - 56\nKovalevskaya - 38",
+      "armDetail": "2 этаж - 204\n3 этаж - 204",
+      "flipcharts": 0,
+      "whiteboards": 6,
+      "intensiveTables": 10,
+      "legalName": "Автономная некоммерческая организация развити системы подготовки кадров в сфере информационных технологий \"Школа 21. Башкортостан\"",
+      "founder": "Министерство просвещения Республики Башкортостан",
+      "taxSystem": "УСН",
+      "vat": "Нет",
+      "vatReason": "В связи с применением УСН",
+      "educationLicense": "Нет",
+      "csiParticipants": 4.43,
+      "directorName": "Директор 18",
+      "directorEmail": "почта 18",
+      "directorBirthday": "18.06.1985",
+      "id": "уфа",
+      "workplacesRaw": "408 рм",
+      "accessControlBool": false,
+      "educationLicenseBool": false,
+      "poolParticipants": 2600,
+      "eventsCount": 20,
+      "graduates": 0,
+      "activeCoreParticipants": 540,
+      "wauMauRatio": 0.48,
+      "mau": 150,
+      "internshipsCount": 5,
+      "eventVisitors": 80,
+      "periods": {
+        "2026-06": {
+          "activeCoreParticipants": 555,
+          "poolParticipants": 2674,
+          "graduates": 0,
+          "eventsCount": 19,
+          "eventVisitors": 0,
+          "internshipsCount": 3
+        },
+        "2026-07": {
+          "activeCoreParticipants": 540,
+          "poolParticipants": 2600,
+          "graduates": 0,
+          "mau": 150,
+          "wauMauRatio": 0.48,
+          "eventsCount": 20,
+          "eventVisitors": 80,
+          "internshipsCount": 5
+        }
+      },
+      "schedule": {
+        "1": [],
+        "2": [
+          "09.02.2026"
+        ],
+        "3": [
+          "16.03.2026"
+        ],
+        "4": [],
+        "5": [],
+        "6": [
+          "08.06.2026"
+        ],
+        "7": [
+          "06.07.2026"
+        ],
+        "8": [],
+        "9": [
+          "14.09.2026"
+        ],
+        "10": [
+          "12.10.2026"
+        ],
+        "11": [
+          "16.11.2026"
+        ],
+        "12": [
+          "07.12.2026"
+        ]
+      },
+      "address": "г. Уфа, ул. Заки Валиди, д. 32/2б",
+      "conferenceHall": "306 (231 трибуна, 150 стулья, но одновременно поставить и трибуну, и все стулья невозможно)",
+      "legalForm": "прочее",
+      "campusAgeText": "1 лет, 0 месяцев"
+    },
+    {
+      "campus": "Омск",
+      "foundationDate": "29.09.2025",
+      "workplaces": 289,
+      "campusType": "франшиза",
+      "totalArea": "4500",
+      "usableArea": "3800",
+      "dormitory": "да (общежитие ВУЗа, предоставляет 50 мест)",
+      "accessControl": "нет",
+      "clustersCount": 5,
+      "clusterSeatsDetail": "Горохов-52\nКоролёв-64\nДраверт-56\nЛетов-33\nВрубель-83",
+      "conferenceHall": "230",
+      "armDetail": "Горохов-52\nКоролёв-64\nДраверт-56\nЛетов-33\nВрубель-83",
+      "flipcharts": 2,
+      "whiteboards": 3,
+      "intensiveTables": 5,
+      "legalName": "Автономная некоммерческая организация «Омский научно-образовательный центр»",
+      "founder": "Акционерное общество \"Агенство развития и инвестиций Омской области\"",
+      "taxSystem": "УСН",
+      "vat": "Нет",
+      "vatReason": "В связи с применением УСН",
+      "educationLicense": "Да",
+      "csiParticipants": 4.33,
+      "directorName": "Директор 19",
+      "directorEmail": "почта 19",
+      "directorBirthday": "19.06.1985",
+      "id": "омск",
+      "workplacesRaw": "289 рм",
+      "accessControlBool": false,
+      "educationLicenseBool": true,
+      "poolParticipants": 1550,
+      "eventsCount": 1,
+      "graduates": 0,
+      "activeCoreParticipants": 520,
+      "wauMauRatio": 0.5,
+      "mau": 220,
+      "internshipsCount": 3,
+      "eventVisitors": 1200,
+      "periods": {
+        "2026-06": {
+          "activeCoreParticipants": 509,
+          "poolParticipants": 1483,
+          "graduates": 0,
+          "mau": 214,
+          "wauMauRatio": 0.49,
+          "eventsCount": 0,
+          "eventVisitors": 1184,
+          "internshipsCount": 0
+        },
+        "2026-07": {
+          "activeCoreParticipants": 520,
+          "poolParticipants": 1550,
+          "graduates": 0,
+          "mau": 220,
+          "wauMauRatio": 0.5,
+          "eventsCount": 1,
+          "eventVisitors": 1200,
+          "internshipsCount": 3
+        }
+      },
+      "schedule": {
+        "1": [],
+        "2": [
+          "09.02.2026"
+        ],
+        "3": [
+          "02.03.2026",
+          "30.03.2026"
+        ],
+        "4": [],
+        "5": [],
+        "6": [
+          "15.06.2026"
+        ],
+        "7": [],
+        "8": [],
+        "9": [
+          "21.09.2026"
+        ],
+        "10": [
+          "19.10.2026"
+        ],
+        "11": [],
+        "12": []
+      },
+      "address": "г. Омск, ул. Ленина, д. 26Б",
+      "legalForm": "прочее",
+      "campusAgeText": "0 лет, 8 месяцев"
+    },
+    {
+      "campus": "Пермь",
+      "foundationDate": "15.12.2025",
+      "workplaces": 100,
+      "campusType": "франшиза",
+      "totalArea": "1188,55",
+      "usableArea": "789,94",
+      "dormitory": "нет",
+      "accessControl": "нет (скуд вуза)",
+      "clustersCount": 2,
+      "clusterSeatsDetail": "Орион - 54 места, \nКвантор - 42 места",
+      "armDetail": "Орион - 54, \nКвантор - 42",
+      "flipcharts": 0,
+      "whiteboards": 2,
+      "legalName": "Фонд \"Фонд креативных индустрий Пермского края\"",
+      "founder": "Пермский край в лице Министерства\nэкономического развития и инвестиций Пермского края",
+      "taxSystem": "УСН",
+      "vat": "Нет",
+      "vatReason": "В связи с применением УСН",
+      "educationLicense": "Нет",
+      "directorName": "Директор 20",
+      "directorEmail": "почта 20",
+      "directorBirthday": "20.06.1985",
+      "id": "пермь",
+      "workplacesRaw": "100 рм",
+      "accessControlBool": false,
+      "educationLicenseBool": false,
+      "poolParticipants": 650,
+      "eventsCount": 1,
+      "graduates": 0,
+      "activeCoreParticipants": 135,
+      "wauMauRatio": 0.49,
+      "mau": 70,
+      "internshipsCount": 2,
+      "eventVisitors": 120,
+      "periods": {
+        "2026-06": {
+          "activeCoreParticipants": 128,
+          "poolParticipants": 628,
+          "graduates": 0,
+          "mau": 65,
+          "wauMauRatio": 0.47,
+          "eventsCount": 0,
+          "eventVisitors": 109,
+          "internshipsCount": 0
+        },
+        "2026-07": {
+          "activeCoreParticipants": 135,
+          "poolParticipants": 650,
+          "graduates": 0,
+          "mau": 70,
+          "wauMauRatio": 0.49,
+          "eventsCount": 1,
+          "eventVisitors": 120,
+          "internshipsCount": 2
+        }
+      },
+      "schedule": {
+        "1": [],
+        "2": [
+          "02.02.2026"
+        ],
+        "3": [],
+        "4": [],
+        "5": [
+          "18.05.2026"
+        ],
+        "6": [
+          "15.06.2026"
+        ],
+        "7": [],
+        "8": [
+          "17.08.2026"
+        ],
+        "9": [
+          "28.09.2026"
+        ],
+        "10": [],
+        "11": [],
+        "12": []
+      },
+      "address": "г. Пермь, шоссе Космонавтов, 111Д",
+      "conferenceHall": "Максимальная вместимость 110 мест, комфортная - 84",
+      "legalForm": "прочее",
+      "campusAgeText": "0 лет, 6 месяцев"
+    },
+    {
+      "campus": "Ставрополь",
+      "foundationDate": "17.12.2025",
+      "workplaces": 200,
+      "campusType": "франшиза",
+      "totalArea": "2956,1",
+      "usableArea": "2107,9",
+      "dormitory": "Да/100 мест (собственное здание)",
+      "directorName": "Директор 21",
+      "directorEmail": "почта 21",
+      "directorBirthday": "21.06.1985",
+      "id": "ставрополь",
+      "workplacesRaw": "200 рм",
+      "poolParticipants": 950,
+      "eventsCount": 6,
+      "graduates": 0,
+      "activeCoreParticipants": 110,
+      "wauMauRatio": 0.5,
+      "mau": 55,
+      "internshipsCount": 2,
+      "eventVisitors": 60,
+      "periods": {
+        "2026-06": {
+          "activeCoreParticipants": 101,
+          "poolParticipants": 899,
+          "graduates": 0,
+          "mau": 48,
+          "wauMauRatio": 0.49,
+          "eventsCount": 5,
+          "eventVisitors": 54,
+          "internshipsCount": 0
+        },
+        "2026-07": {
+          "activeCoreParticipants": 110,
+          "poolParticipants": 950,
+          "graduates": 0,
+          "mau": 55,
+          "wauMauRatio": 0.5,
+          "eventsCount": 6,
+          "eventVisitors": 60,
+          "internshipsCount": 2
+        }
+      },
+      "schedule": {
+        "1": [],
+        "2": [
+          "02.02.2026"
+        ],
+        "3": [],
+        "4": [],
+        "5": [],
+        "6": [
+          "15.06.2026"
+        ],
+        "7": [
+          "13.07.2026"
+        ],
+        "8": [
+          "17.08.2026"
+        ],
+        "9": [
+          "14.09.2026"
+        ],
+        "10": [],
+        "11": [],
+        "12": []
+      },
+      "address": "г. Ставрополь, ул. Ивана Щипакина, д. 8",
+      "legalForm": "не указана",
+      "campusAgeText": "0 лет, 5 месяцев"
+    },
+    {
+      "campus": "Волгоград",
+      "foundationDate": "25.05.2026",
+      "workplaces": 283,
+      "campusType": "франшиза",
+      "totalArea": "3887,55",
+      "usableArea": "2750,29",
+      "dormitory": "нет",
+      "accessControl": "нет",
+      "directorName": "Директор 22",
+      "directorEmail": "почта 22",
+      "directorBirthday": "22.06.1985",
+      "id": "волгоград",
+      "workplacesRaw": "283 рм",
+      "accessControlBool": false,
+      "poolParticipants": 1000,
+      "eventsCount": 1,
+      "graduates": 0,
+      "activeCoreParticipants": 120,
+      "wauMauRatio": 0.46,
+      "mau": 60,
+      "internshipsCount": 2,
+      "eventVisitors": 280,
+      "periods": {
+        "2026-06": {
+          "activeCoreParticipants": 128,
+          "poolParticipants": 987,
+          "graduates": 0,
+          "mau": 53,
+          "wauMauRatio": 0.44,
+          "eventsCount": 0,
+          "eventVisitors": 260,
+          "internshipsCount": 0
+        },
+        "2026-07": {
+          "activeCoreParticipants": 120,
+          "poolParticipants": 1000,
+          "graduates": 0,
+          "mau": 60,
+          "wauMauRatio": 0.46,
+          "eventsCount": 1,
+          "eventVisitors": 280,
+          "internshipsCount": 2
+        }
+      },
+      "schedule": {
+        "1": [],
+        "2": [
+          "02.02.2026"
+        ],
+        "3": [],
+        "4": [
+          "20.04.2026"
+        ],
+        "5": [
+          "11.05.2026"
+        ],
+        "6": [],
+        "7": [
+          "20.07.2026"
+        ],
+        "8": [
+          "17.08.2026"
+        ],
+        "9": [
+          "14.09.2026"
+        ],
+        "10": [],
+        "11": [],
+        "12": []
+      },
+      "address": "г. Волгоград, ул. Социалистическая, д. 15",
+      "legalForm": "не указана",
+      "campusAgeText": "0 лет, 0 месяцев"
+    },
+    {
+      "campus": "Ижевск",
+      "foundationDate": "17.06.2026",
+      "workplaces": 100,
+      "campusType": "франшиза",
+      "dormitory": "нет",
+      "accessControl": "да",
+      "clustersCount": 2,
+      "clusterSeatsDetail": "Дерябин - 48 мест\nЧайковский - 52 места",
+      "conferenceHall": "90",
+      "armDetail": "Дерябин - 48 \nЧайковский - 52",
+      "legalName": "Структурное подразделение Автономной некоммерческой организации «Цифровая экономика Удмуртской Республики» (АНО «ЦЭУР»)",
+      "founder": "Министерство цифрового развития Удмуртии",
+      "directorName": "Директор 23",
+      "directorEmail": "почта 23",
+      "directorBirthday": "23.06.1985",
+      "id": "ижевск",
+      "workplacesRaw": "100 рм",
+      "accessControlBool": true,
+      "poolParticipants": 220,
+      "eventsCount": 2,
+      "graduates": 0,
+      "activeCoreParticipants": 5,
+      "wauMauRatio": 0.42,
+      "mau": 30,
+      "internshipsCount": 2,
+      "eventVisitors": 20,
+      "periods": {
+        "2026-06": {
+          "activeCoreParticipants": 0,
+          "poolParticipants": 209,
+          "graduates": 0
+        },
+        "2026-07": {
+          "activeCoreParticipants": 5,
+          "poolParticipants": 220,
+          "graduates": 0,
+          "mau": 30,
+          "wauMauRatio": 0.42,
+          "eventsCount": 2,
+          "eventVisitors": 20,
+          "internshipsCount": 2
+        }
+      },
+      "schedule": {
+        "1": [],
+        "2": [],
+        "3": [],
+        "4": [],
+        "5": [],
+        "6": [
+          "15.06.2026"
+        ],
+        "7": [],
+        "8": [
+          "17.08.2026"
+        ],
+        "9": [
+          "21.09.2026"
+        ],
+        "10": [
+          "12.10.2026"
+        ],
+        "11": [],
+        "12": []
+      },
+      "address": "г. Ижевск, ул. Красная, д. 105",
+      "legalForm": "не указана"
+    }
+  ],
+  "norms": {
+    "growthMetrics": [
+      "activeCoreParticipants",
+      "poolParticipants",
+      "graduates",
+      "mau",
+      "wauMauRatio",
+      "eventsCount",
+      "eventVisitors",
+      "internshipsCount"
+    ],
+    "csiCustomer": {
+      "red": 4.2,
+      "yellow": 4.5
+    },
+    "csiParticipants": {
+      "red": 4.3
+    }
+  },
+  "periodsAvailable": [
+    "2026-06",
+    "2026-07"
+  ],
+  "periodLabels": {
+    "2026-06": "01.06.2026",
+    "2026-07": "01.07.2026"
+  }
+}

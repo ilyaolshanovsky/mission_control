@@ -1,0 +1,1752 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Дашборд сети кампусов «Школа 21»</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" async></script>
+<style>
+  :root{
+    --black:#0B0C0E;
+    --ink:#0B0C0E;
+    --ink-soft:#33373C;
+    --paper:#EDEFF2;
+    --paper-2:#E4E7EB;
+    --panel:#FFFFFF;
+    --line:#E2E5EA;
+    --line-strong:#CBD0D7;
+    --muted:#5E656D;
+    --muted-2:#9098A0;
+    --accent:#21A038;
+    --accent-dark:#178A2C;
+    --accent-soft:#E2F6E7;
+    --accent-line:#A9E2B5;
+    --warn:#E5484D;
+    --warn-soft:#FCE9E9;
+    --caution:#B5851A;
+    --caution-soft:#FBF0D8;
+    --radius:6px;
+    --radius-sm:4px;
+    --shadow:0 1px 1px rgba(11,12,14,0.03), 0 10px 30px -16px rgba(11,12,14,0.16);
+    --shadow-sm:0 1px 2px rgba(11,12,14,0.05);
+    --font-display:'Space Grotesk',system-ui,sans-serif;
+    --font-body:'Inter',system-ui,sans-serif;
+    --font-mono:'JetBrains Mono',ui-monospace,monospace;
+    --dotgrid:radial-gradient(rgba(255,255,255,0.10) 1px, transparent 1px);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:var(--font-body);
+    background:var(--paper);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+    font-size:14px;
+    line-height:1.45;
+  }
+  ::selection{background:var(--accent);color:#fff;}
+  a{color:inherit;}
+  button{font-family:inherit;cursor:pointer;}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+
+  /* ---------- App shell ---------- */
+  .app-header{
+    position:sticky;top:0;z-index:40;
+    background:var(--black);
+    background-image:var(--dotgrid);
+    background-size:18px 18px;
+    color:#fff;
+    border-bottom:2px solid var(--accent);
+  }
+  .app-header__top{
+    display:flex;align-items:center;gap:14px;
+    padding:16px 26px 12px;
+    flex-wrap:wrap;
+  }
+  .wordmark{
+    display:flex;align-items:center;gap:9px;
+    font-family:var(--font-display);
+    font-weight:700;font-size:18px;letter-spacing:-0.01em;
+  }
+  .wordmark .num{
+    display:inline-flex;align-items:center;justify-content:center;
+    background:var(--accent);color:#0B0C0E;
+    font-weight:700;font-size:17px;line-height:1;
+    padding:5px 7px 4px;border-radius:5px;letter-spacing:0;
+  }
+  .wordmark .sep{display:none;}
+  .wordmark .sub{
+    font-family:var(--font-mono);font-weight:500;font-size:11.5px;
+    color:#8B9298;letter-spacing:0.01em;
+    padding-left:11px;margin-left:3px;border-left:1px solid #2C3137;
+    text-transform:uppercase;
+  }
+  .header-meta{
+    margin-left:auto;display:flex;align-items:center;gap:8px;
+    font-family:var(--font-mono);font-size:11.5px;color:#8B9298;
+    background:rgba(255,255,255,0.04);border:1px solid #23282E;
+    padding:6px 11px;border-radius:20px;
+  }
+  .header-meta .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);display:inline-block;box-shadow:0 0 0 3px rgba(33,160,56,0.22);}
+  .app-nav{
+    display:flex;gap:2px;padding:0 22px;overflow-x:auto;
+  }
+  .app-nav button{
+    background:none;border:none;color:#9CA3AA;
+    font-family:var(--font-body);font-weight:600;font-size:13.5px;
+    padding:12px 16px 13px;border-bottom:2.5px solid transparent;
+    white-space:nowrap;transition:color .15s, border-color .15s, background .15s;
+  }
+  .app-nav button:hover{color:#fff;background:rgba(255,255,255,0.04);}
+  .app-nav button.active{color:#fff;border-bottom-color:var(--accent);}
+
+  main{max-width:1340px;margin:0 auto;padding:30px 22px 90px;}
+  section.block{display:none;}
+  section.block.active{display:block;}
+
+  .block-head{margin-bottom:20px;}
+  .block-head h1{
+    font-family:var(--font-display);font-size:24px;font-weight:700;margin:0 0 5px;letter-spacing:-0.018em;
+    display:flex;align-items:center;gap:11px;
+  }
+  .block-head h1::before{
+    content:"";width:11px;height:22px;background:var(--accent);border-radius:2px;flex:none;
+    box-shadow:3px 0 0 rgba(33,160,56,0.28);
+  }
+  .block-head p{margin:0;color:var(--muted);font-size:13.5px;max-width:660px;}
+
+  /* ---------- Block1: zone summary ---------- */
+  .zone-summary{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;}
+  .zone-card{
+    flex:1;min-width:160px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:16px 18px;box-shadow:var(--shadow-sm);border-left:4px solid var(--line-strong);
+    cursor:pointer;transition:transform .12s, box-shadow .12s, border-color .12s, background .12s;
+    text-align:left;font:inherit;color:inherit;appearance:none;-webkit-appearance:none;
+  }
+  .zone-card:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+  .zone-card:hover{transform:translateY(-1px);box-shadow:var(--shadow);}
+  .zone-card.active{background:var(--paper);box-shadow:inset 0 0 0 2px var(--accent-line);}
+  .zone-card.zone-green.active{background:var(--accent-soft);box-shadow:inset 0 0 0 2px var(--accent);}
+  .zone-card.zone-yellow.active{background:var(--caution-soft);box-shadow:inset 0 0 0 2px var(--caution);}
+  .zone-card.zone-red.active{background:var(--warn-soft);box-shadow:inset 0 0 0 2px var(--warn);}
+  .zone-card.zone-muted.active{background:var(--paper-2);box-shadow:inset 0 0 0 2px var(--line-strong);}
+  .zone-card .zone-num{font-family:var(--font-display);font-size:30px;font-weight:700;line-height:1;}
+  .zone-card .zone-lbl{font-size:12.5px;color:var(--muted);margin-top:4px;}
+  .zone-card .zone-pct{font-size:11px;color:var(--muted-2);font-family:var(--font-mono);margin-top:2px;}
+  .zone-card.zone-green{border-left-color:var(--accent);} .zone-card.zone-green .zone-num{color:var(--accent-dark);}
+  .zone-card.zone-yellow{border-left-color:var(--caution);} .zone-card.zone-yellow .zone-num{color:var(--caution);}
+  .zone-card.zone-red{border-left-color:var(--warn);} .zone-card.zone-red .zone-num{color:var(--warn);}
+  .zone-card.zone-muted{border-left-color:var(--muted-2);} .zone-card.zone-muted .zone-num{color:var(--muted-2);}
+
+  /* ---------- Block1: top-3 leaderboard ---------- */
+  details.b1-top3{
+    background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:14px 16px;margin-bottom:16px;box-shadow:var(--shadow-sm);border-top:none;
+  }
+  details.b1-top3 summary{font-family:var(--font-display);font-size:14px;}
+  .top3-grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(220px, 1fr));gap:10px;}
+  .top3-card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-sm);padding:11px 13px;}
+  .top3-title{font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;margin-bottom:7px;}
+  .top3-card ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:5px;}
+  .top3-card li{display:flex;align-items:center;gap:7px;font-size:12.5px;}
+  .top3-card li .rank{
+    width:17px;height:17px;border-radius:50%;background:var(--ink);color:#fff;font-size:10px;font-weight:700;
+    display:inline-flex;align-items:center;justify-content:center;flex:none;font-family:var(--font-mono);
+  }
+  .top3-card li:nth-child(1) .rank{background:var(--accent);}
+  .top3-card li .nm{flex:1;color:var(--ink-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .top3-card li b{font-family:var(--font-mono);color:var(--ink);}
+
+  /* ---------- Block1: column visibility toggles ---------- */
+  .col-toggle-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;}
+  .col-toggle-label{font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;flex:none;}
+  .col-toggle-row{display:flex;gap:6px;flex-wrap:wrap;flex:1;}
+  .col-toggle{
+    font-size:11.5px;padding:5px 10px;border-radius:14px;border:1px solid var(--line-strong);background:#fff;color:var(--muted);
+    cursor:pointer;transition:all .12s;
+  }
+  .col-toggle.active{background:var(--accent-soft);border-color:var(--accent-line);color:var(--accent-dark);font-weight:600;}
+  .col-toggle-reset{background:none;border:none;color:var(--muted);font-size:11.5px;text-decoration:underline;text-underline-offset:2px;cursor:pointer;flex:none;}
+  .col-toggle-reset:hover{color:var(--accent-dark);}
+
+  /* ---------- Filter bar ---------- */
+  .filterbar{
+    display:flex;gap:11px;align-items:flex-end;flex-wrap:wrap;
+    background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:15px 16px;margin-bottom:16px;box-shadow:var(--shadow-sm);
+  }
+  .field{display:flex;flex-direction:column;gap:5px;}
+  .field label{font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;}
+  .field select, .field input[type=text], .field input[type=number]{
+    font-family:var(--font-body);font-size:13px;color:var(--ink);
+    border:1px solid var(--line-strong);border-radius:var(--radius-sm);
+    padding:8px 10px;background:#fff;min-width:140px;transition:border-color .12s, box-shadow .12s;
+  }
+  .field select:focus, .field input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);outline:none;}
+  .field input[type=number]{width:90px;min-width:0;}
+  .field-row-inline{display:flex;align-items:center;gap:6px;}
+  .field-row-inline span{color:var(--muted-2);font-size:12px;}
+  .btn{
+    border:1px solid var(--line-strong);background:#fff;color:var(--ink);
+    border-radius:var(--radius-sm);padding:8px 13px;font-size:13px;font-weight:600;
+    display:inline-flex;align-items:center;gap:6px;transition:background .12s,border-color .12s,color .12s;
+  }
+  .btn:hover{border-color:var(--ink);}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .btn.primary:hover{background:var(--accent-dark);border-color:var(--accent-dark);}
+  .btn svg{width:14px;height:14px;flex:none;}
+  .btn-clear{margin-left:auto;align-self:center;background:none;border:none;color:var(--muted);font-size:12.5px;font-weight:600;text-decoration:underline;text-underline-offset:2px;padding:6px 4px;}
+  .btn-clear:hover{color:var(--accent-dark);}
+
+  /* multiselect */
+  .ms{position:relative;}
+  .ms-btn{
+    border:1px solid var(--line-strong);background:#fff;border-radius:var(--radius-sm);
+    padding:8px 10px;font-size:13px;min-width:170px;text-align:left;
+    display:flex;align-items:center;justify-content:space-between;gap:8px;transition:border-color .12s;
+  }
+  .ms-btn:hover{border-color:var(--ink);}
+  .ms-btn svg{width:13px;height:13px;color:var(--muted);flex:none;}
+  .ms-panel{
+    position:absolute;top:calc(100% + 6px);left:0;z-index:50;
+    background:#fff;border:1px solid var(--line-strong);border-radius:var(--radius);
+    box-shadow:var(--shadow);width:260px;max-height:320px;display:none;flex-direction:column;overflow:hidden;
+  }
+  .ms-panel.open{display:flex;}
+  .ms-search{border:none;border-bottom:1px solid var(--line);padding:10px 12px;font-size:13px;font-family:inherit;}
+  .ms-search:focus{outline:none;border-bottom-color:var(--accent);}
+  .ms-actions{display:flex;justify-content:space-between;padding:7px 12px;border-bottom:1px solid var(--line);background:var(--paper);}
+  .ms-actions button{background:none;border:none;color:var(--accent-dark);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;}
+  .ms-list{overflow-y:auto;padding:4px 0;}
+  .ms-item{display:flex;align-items:center;gap:8px;padding:7px 12px;font-size:13px;cursor:pointer;}
+  .ms-item:hover{background:var(--accent-soft);}
+  .ms-item input{accent-color:var(--accent);}
+
+  footer.app-footer{
+    text-align:center;color:var(--muted-2);font-size:12px;padding:22px 22px 40px;
+  }
+  .footnote-toggle{background:none;border:none;color:var(--muted);text-decoration:underline;text-underline-offset:2px;font-size:12px;cursor:pointer;}
+  .footnote-toggle:hover{color:var(--accent-dark);}
+  .footnote-box{
+    max-width:660px;margin:12px auto 0;text-align:left;background:#fff;border:1px solid var(--line);
+    border-left:3px solid var(--accent);
+    border-radius:var(--radius);padding:14px 16px;font-size:12.5px;color:var(--muted);display:none;line-height:1.6;
+  }
+  .footnote-box.open{display:block;}
+
+  /* ---------- KPI table (Block 1) ---------- */
+  .table-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);box-shadow:var(--shadow);}
+  table.kpi{border-collapse:collapse;width:max-content;max-width:100%;}
+  table.kpi th, table.kpi td{padding:7px 8px;text-align:right;border-bottom:1px solid var(--line);}
+  table.kpi th{white-space:normal;max-width:108px;line-height:1.2;vertical-align:bottom;font-size:10px;}
+  table.kpi td{white-space:nowrap;font-size:12px;}
+  table.kpi th:first-child, table.kpi td:first-child{text-align:left;max-width:118px;min-width:88px;}
+  table.kpi th:not(:first-child), table.kpi td:not(:first-child){width:1%;max-width:96px;}
+  table.kpi thead th{
+    background:var(--black);color:#D7DADD;font-family:var(--font-body);font-weight:600;font-size:10px;
+    text-transform:uppercase;letter-spacing:.02em;position:sticky;top:0;z-index:5;cursor:pointer;user-select:none;transition:color .12s;
+  }
+  table.kpi thead th:hover{color:#fff;}
+  table.kpi thead th:first-child{position:sticky;left:0;z-index:6;}
+  table.kpi tbody td:first-child{position:sticky;left:0;background:var(--panel);font-weight:700;font-family:var(--font-display);z-index:2;}
+  table.kpi thead th .sort-ind{margin-left:5px;font-size:10px;color:var(--accent);}
+  table.kpi thead th:not(.sorted) .sort-ind{display:none;}
+  table.kpi tbody tr:hover td{background:#F2FBF4;}
+  table.kpi tbody tr:hover td:first-child{background:#E7F6EB;}
+  table.kpi tbody td{font-family:var(--font-mono);font-size:12px;color:var(--ink-soft);}
+  table.kpi tbody td.dash{color:var(--muted-2);font-family:var(--font-body);}
+  .trend{display:inline-flex;align-items:center;gap:2px;margin-left:4px;font-size:9.5px;font-weight:700;padding:1px 4px;border-radius:4px;font-family:var(--font-body);vertical-align:middle;}
+  .trend.up{background:var(--accent-soft);color:var(--accent-dark);}
+  .trend.down{background:var(--warn-soft);color:var(--warn);}
+  .trend.flat{background:var(--caution-soft);color:var(--caution);}
+  .csi-pill{padding:2px 8px;border-radius:4px;font-weight:700;}
+  .csi-pill.csi-green{background:var(--accent-soft);color:var(--accent-dark);}
+  .csi-pill.csi-yellow{background:var(--caution-soft);color:var(--caution);}
+  .csi-pill.csi-red{background:var(--warn-soft);color:var(--warn);}
+
+  /* ---------- Cards (Block 2) ---------- */
+  .campus-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:16px;}
+  .card{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px 18px 16px;display:flex;flex-direction:column;gap:12px;transition:border-color .15s, box-shadow .15s, transform .15s;overflow:hidden;}
+  .card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .2s ease;}
+  .card:hover{border-color:var(--line-strong);box-shadow:0 1px 1px rgba(11,12,14,0.03), 0 16px 36px -16px rgba(11,12,14,0.22);}
+  .card:hover::before{transform:scaleX(1);}
+  .card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
+  .card-head h3{font-family:var(--font-display);font-size:18px;margin:0;font-weight:700;letter-spacing:-0.015em;}
+  .type-pill{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:4px;background:var(--black);color:#fff;white-space:nowrap;text-transform:uppercase;letter-spacing:.04em;}
+  .type-pill.tp-filial{background:var(--black);}
+  .type-pill.tp-franchise{background:var(--accent);}
+  .type-pill.tp-franchise-class{background:var(--caution);}
+  .type-pill.tp-unknown{background:var(--muted-2);}
+  .card-sub{color:var(--muted);font-size:12.5px;margin-top:-6px;font-family:var(--font-mono);}
+  .card-highlight{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-sm);padding:10px 12px;display:flex;flex-direction:column;gap:6px;}
+  .card-highlight .hl-row{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--ink-soft);line-height:1.35;}
+  .card-highlight .hl-row svg{width:16px;height:16px;flex:none;margin-top:1px;color:var(--accent-dark);}
+  .card-highlight .hl-row b{color:var(--ink);}
+  .stat-row{display:flex;gap:14px;flex-wrap:wrap;}
+  .stat{display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:13px;}
+  .stat svg{width:17px;height:17px;color:var(--accent-dark);flex:none;}
+  .stat b{font-size:15px;}
+  .stat small{display:block;color:var(--muted);font-family:var(--font-body);font-size:10.5px;text-transform:uppercase;letter-spacing:.03em;}
+  .pill-row{display:flex;gap:7px;flex-wrap:wrap;}
+  .badge{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:4px 9px;border-radius:4px;border:1px solid var(--line-strong);background:#fff;}
+  .badge svg{width:12px;height:12px;}
+  .badge.yes{color:var(--accent-dark);border-color:var(--accent-line);background:var(--accent-soft);}
+  .badge.no{color:var(--muted);border-color:var(--line-strong);}
+  .badge.unknown{color:var(--muted-2);border-style:dashed;}
+  .kv{display:flex;justify-content:space-between;gap:10px;font-size:12.5px;padding:5px 0;border-bottom:1px dashed var(--line);}
+  .kv:last-child{border-bottom:none;}
+  .kv span.k{color:var(--muted);flex:none;}
+  .kv span.v{text-align:right;font-family:var(--font-mono);color:var(--ink-soft);}
+  .mini-stats{display:flex;gap:8px;}
+  .mini-stats div{flex:1;text-align:center;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-sm);padding:9px 4px;}
+  .mini-stats b{display:block;font-family:var(--font-mono);font-size:16px;color:var(--ink);}
+  .mini-stats small{font-size:9.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;}
+  details.disclosure{font-size:12.5px;border-top:1px solid var(--line);padding-top:8px;}
+  details.disclosure summary{cursor:pointer;color:var(--accent-dark);font-weight:600;list-style:none;}
+  details.disclosure summary::-webkit-details-marker{display:none;}
+  details.disclosure summary::before{content:'▸ ';}
+  details.disclosure[open] summary::before{content:'▾ ';}
+  details.disclosure pre{white-space:pre-wrap;font-family:var(--font-mono);font-size:11.5px;color:var(--muted);background:var(--paper);padding:9px 11px;border-radius:var(--radius-sm);margin:8px 0 0;border:1px solid var(--line);}
+  .card-footer{margin-top:auto;display:flex;justify-content:flex-end;padding-top:6px;}
+  .empty-state{padding:48px 20px;text-align:center;color:var(--muted);background:var(--panel);border:1px dashed var(--line-strong);border-radius:var(--radius);}
+
+  /* ---------- Schedule (Block 3) ---------- */
+  table.sched{border-collapse:collapse;width:100%;min-width:1400px;}
+  table.sched th, table.sched td{padding:9px 11px;border-bottom:1px solid var(--line);border-right:1px solid var(--line);vertical-align:top;}
+  table.sched thead th{
+    background:var(--black);color:#D7DADD;position:sticky;top:0;font-weight:600;font-size:12px;font-family:var(--font-body);
+    text-align:left;white-space:nowrap;z-index:5;
+  }
+  table.sched thead th:first-child{position:sticky;left:0;z-index:6;}
+  table.sched tbody td:first-child{position:sticky;left:0;background:var(--paper-2);font-family:var(--font-display);font-weight:700;font-size:13px;z-index:2;white-space:nowrap;}
+  table.sched tbody td{min-width:108px;}
+  table.sched tbody tr:hover td{background:#F2FBF4;}
+  table.sched tbody tr:hover td:first-child{background:#DBDFE4;}
+  table.sched tbody td.dash{color:var(--muted-2);text-align:center;}
+  .date-chip{display:inline-block;font-family:var(--font-mono);font-size:11.5px;padding:3px 7px;border-radius:4px;margin:1px 2px 1px 0;border:1px solid var(--line-strong);}
+  .date-chip.past{color:var(--muted-2);border-color:var(--line);background:#F4F5F7;}
+  .date-chip.future{color:var(--ink-soft);background:#fff;}
+  .date-chip.soon{color:var(--accent-dark);background:var(--accent-soft);border-color:var(--accent-line);font-weight:600;}
+  .date-chip.today, .date-chip.tomorrow{color:#fff;background:var(--warn);border-color:var(--warn);font-weight:700;}
+  .legend-row{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px;font-size:12px;color:var(--muted);}
+  .legend-row .lg{display:inline-flex;align-items:center;gap:6px;}
+  .legend-row .sw{width:12px;height:12px;border-radius:3px;display:inline-block;}
+
+  /* ---------- Certificate modal ---------- */
+  .cert-overlay{
+    position:fixed;inset:0;background:rgba(11,12,14,.62);z-index:100;
+    display:flex;align-items:flex-start;justify-content:center;padding:30px 16px;overflow-y:auto;
+    backdrop-filter:blur(2px);
+  }
+  .cert-modal{background:#fff;width:100%;max-width:720px;border-radius:10px;box-shadow:0 24px 70px -10px rgba(0,0,0,.5);overflow:hidden;}
+  .cert-actions{display:flex;justify-content:space-between;align-items:center;padding:12px 22px;background:var(--black);border-bottom:2px solid var(--accent);}
+  .cert-actions .btn-x{background:none;border:none;font-size:13px;color:#B6BCC2;display:flex;align-items:center;gap:6px;font-weight:600;}
+  .cert-actions .btn-x:hover{color:#fff;}
+  .cert-body{padding:36px 42px 46px;font-size:13px;}
+  .cert-brand{display:flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:18px;}
+  .cert-brand .wm{font-family:var(--font-display);font-weight:700;font-size:24px;display:inline-flex;align-items:center;gap:8px;}
+  .cert-brand .wm .num{background:var(--accent);color:#0B0C0E !important;padding:4px 8px 3px;border-radius:5px;}
+  .cert-title{text-align:center;font-family:var(--font-display);font-weight:700;font-size:18px;letter-spacing:.05em;text-transform:uppercase;margin:10px 0 4px;}
+  .cert-dates{text-align:center;color:var(--muted);font-size:12px;margin-bottom:24px;font-family:var(--font-mono);}
+  .cert-section{margin-bottom:22px;}
+  .cert-section h4{font-family:var(--font-display);font-size:13px;text-transform:uppercase;letter-spacing:.04em;border-bottom:2px solid var(--accent);padding-bottom:6px;margin:0 0 10px;}
+  .cert-section .kv span.v{font-family:var(--font-body);}
+  .cert-campus-divider{margin:30px 0 18px;padding-top:18px;border-top:3px solid var(--black);text-align:center;page-break-before:always;}
+  .cert-campus-divider span{display:inline-block;background:var(--black);color:#fff;font-family:var(--font-display);font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.04em;padding:6px 16px;border-radius:5px;}
+  @media print{
+    body *{visibility:hidden;}
+    .cert-modal, .cert-modal *{visibility:visible;}
+    .cert-overlay{position:absolute;background:none;padding:0;display:block;backdrop-filter:none;}
+    .cert-modal{position:absolute;left:0;top:0;width:100%;max-width:none;box-shadow:none;border-radius:0;}
+    .cert-actions{display:none;}
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width:720px){
+    main{padding:18px 12px 60px;}
+    .filterbar{padding:12px;}
+    .campus-grid{grid-template-columns:1fr;}
+    .cert-body{padding:24px 18px 32px;}
+  }
+
+  /* ---------- Olga chat widget ---------- */
+  .olga-fab{
+    position:fixed;right:22px;bottom:22px;z-index:90;
+    width:58px;height:58px;border-radius:50%;border:none;
+    background:var(--accent);color:#fff;box-shadow:0 8px 28px rgba(33,160,56,.35);
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--font-display);font-weight:700;font-size:18px;
+    transition:transform .15s, box-shadow .15s, background .15s;
+  }
+  .olga-fab:hover{background:var(--accent-dark);transform:translateY(-2px);}
+  .olga-fab.open{background:var(--black);box-shadow:0 8px 28px rgba(11,12,14,.28);}
+  .olga-panel{
+    position:fixed;right:22px;bottom:92px;z-index:90;
+    width:min(390px, calc(100vw - 24px));height:min(560px, calc(100vh - 120px));
+    background:#fff;border:1px solid var(--line);border-radius:12px;
+    box-shadow:0 18px 50px -12px rgba(11,12,14,.28);
+    display:none;flex-direction:column;overflow:hidden;
+  }
+  .olga-panel.open{display:flex;}
+  .olga-head{
+    background:var(--black);color:#fff;padding:14px 16px;
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    border-bottom:2px solid var(--accent);
+  }
+  .olga-head .title{font-family:var(--font-display);font-weight:700;font-size:15px;}
+  .olga-head .sub{font-size:11px;color:#9CA3AA;margin-top:2px;}
+  .olga-head button{background:none;border:none;color:#B6BCC2;cursor:pointer;padding:4px;}
+  .olga-head button:hover{color:#fff;}
+  .olga-msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;background:var(--paper);}
+  .olga-msg{max-width:92%;padding:10px 12px;border-radius:10px;font-size:13px;line-height:1.45;word-break:break-word;}
+  .olga-msg.user{white-space:pre-wrap;align-self:flex-end;background:var(--accent);color:#fff;border-bottom-right-radius:3px;}
+  .olga-msg.assistant{align-self:flex-start;background:#fff;border:1px solid var(--line);border-bottom-left-radius:3px;}
+  .olga-msg.assistant p{margin:0 0 8px;}
+  .olga-msg.assistant p:last-child{margin-bottom:0;}
+  .olga-msg.assistant ul{margin:6px 0 8px 18px;padding:0;}
+  .olga-msg.assistant li{margin:4px 0;}
+  .olga-msg.assistant strong{font-weight:700;}
+  .olga-msg.assistant em{color:var(--muted);font-style:italic;}
+  .olga-msg.assistant h2,.olga-msg.assistant h3,.olga-msg.assistant h4{margin:8px 0 6px;font-family:var(--font-display);font-weight:700;}
+  .olga-msg.assistant h2{font-size:15px;}
+  .olga-msg.assistant h3{font-size:14px;}
+  .olga-msg.assistant h4{font-size:13px;}
+  .olga-msg.assistant table{border-collapse:collapse;width:100%;margin:8px 0;font-size:12px;}
+  .olga-msg.assistant th,.olga-msg.assistant td{border:1px solid var(--line);padding:5px 7px;text-align:left;}
+  .olga-msg.assistant th{background:var(--paper);}
+  .olga-msg.error{align-self:flex-start;background:var(--warn-soft);border:1px solid #f3c0c2;color:#8f1d22;}
+  .olga-msg.typing{color:var(--muted);font-style:italic;background:#fff;border:1px dashed var(--line);}
+  .olga-quick{display:flex;gap:6px;flex-wrap:wrap;padding:0 14px 8px;background:var(--paper);}
+  .olga-quick button{
+    font-size:11px;padding:5px 9px;border-radius:14px;border:1px solid var(--line-strong);
+    background:#fff;color:var(--muted);cursor:pointer;
+  }
+  .olga-quick button:hover{border-color:var(--accent-line);color:var(--accent-dark);background:var(--accent-soft);}
+  .olga-input{
+    border-top:1px solid var(--line);padding:10px 12px;display:flex;gap:8px;align-items:flex-end;background:#fff;
+  }
+  .olga-input textarea{
+    flex:1;resize:none;min-height:42px;max-height:120px;
+    border:1px solid var(--line-strong);border-radius:8px;padding:9px 10px;
+    font-family:var(--font-body);font-size:13px;
+  }
+  .olga-input textarea:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px var(--accent-soft);}
+  .olga-input .send{
+    border:none;background:var(--accent);color:#fff;border-radius:8px;
+    padding:10px 14px;font-weight:600;font-size:13px;flex:none;
+  }
+  .olga-input .send:disabled{opacity:.55;cursor:not-allowed;}
+  .olga-report{
+    margin-top:8px;display:inline-flex;align-items:center;gap:6px;
+    font-size:11.5px;font-weight:600;color:var(--accent-dark);
+    background:var(--accent-soft);border:1px solid var(--accent-line);
+    border-radius:6px;padding:5px 9px;cursor:pointer;
+  }
+  @media (max-width:720px){
+    .olga-fab{right:14px;bottom:14px;}
+    .olga-panel{right:12px;bottom:82px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="app-header__top">
+    <div class="wordmark"><span>Школа</span><span class="num">21</span><span class="sub">Дашборд сети кампусов</span></div>
+    <div class="header-meta"><span class="dot"></span><span id="updatedAtLabel">данные актуальны на —</span></div>
+  </div>
+  <nav class="app-nav" id="appNav">
+    <button data-target="block1" class="active">Сводный дашборд</button>
+    <button data-target="block2">Карточки кампусов</button>
+    <button data-target="block3">График стартов</button>
+  </nav>
+</header>
+
+<main id="appMain">
+  <section class="block active" id="block1"></section>
+  <section class="block" id="block2"></section>
+  <section class="block" id="block3"></section>
+</main>
+
+<footer class="app-footer">
+  Прототип дашборда по БТ «Школа 21». <button class="footnote-toggle" id="footnoteToggle">Что не реализовано в этом прототипе</button>
+  <div class="footnote-box" id="footnoteBox">
+    Это интерактивный прототип в браузере, без сервера и базы данных. Полностью работают: сортировка и фильтры таблицы,
+    карточки кампусов, выгрузка графика стартов в .xlsx, печать справки о кампусе (сохраняется как PDF через диалог печати браузера).
+    Не реализовано — требует серверной части: авторизация по ролям и ограничение доступа к выгрузке справок (NFR.10),
+    журналирование запросов справок (NFR.11), генерация PDF серверной библиотекой (NFR.08), подгрузка истории периодов из БД.
+  </div>
+</footer>
+
+<div id="modalRoot"></div>
+
+<div class="olga-panel" id="olgaPanel" aria-live="polite">
+  <div class="olga-head">
+    <div>
+      <div class="title">Ольга</div>
+      <div class="sub">Ассистент дашборда «Школа 21»</div>
+    </div>
+    <button type="button" id="olgaClose" title="Свернуть"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </div>
+  <div class="olga-msgs" id="olgaMsgs"></div>
+  <div class="olga-quick" id="olgaQuick">
+    <button type="button" data-q="Сколько кампусов в сети и как распределены по зонам?">Зоны сети</button>
+    <button type="button" data-q="Топ-5 кампусов по MAU на июль 2026">Топ MAU</button>
+    <button type="button" data-q="Сформируй сводный отчёт по сети кампусов за июль 2026">Сводный отчёт</button>
+    <button type="button" data-q="Какие кампусы в красной зоне и почему?">Красная зона</button>
+  </div>
+  <form class="olga-input" id="olgaForm">
+    <textarea id="olgaInput" rows="1" placeholder="Спросите про кампусы, KPI или попросите отчёт…"></textarea>
+    <button class="send" type="submit" id="olgaSend">Отправить</button>
+  </form>
+</div>
+<button class="olga-fab" id="olgaFab" type="button" title="Чат с Ольгой">О</button>
+
+<script type="application/json" id="campusDataJson">{"updatedAt": "2026-06-17", "campuses": [{"id": "москва", "campus": "Москва", "foundationDate": "20.08.2018", "workplaces": 760, "workplacesRaw": "760 рм", "campusType": "филиал", "totalArea": "6500", "usableArea": "4900", "dormitory": "нет", "accessControl": "да", "accessControlBool": true, "clustersCount": 9, "clusterSeatsDetail": "Galaxy - 134  \nOxygen - 138 \nSupernova - 54 \nVoid - 52 \nAtlantis - 18 \nIllusion - 59 \nMirage - 138\nOasis - 87 \nDune - 80", "conferenceHall": "Атриум - 150\nКонференц-зал Акселератор - 70 максимум, комфортно 50", "armDetail": "Galaxy - 134\nOxygen - 138 \nSupernova - 54\nVoid - 52 \nAtlantis - 18 \nIllusion - 59  \nMirage - 138  \nOasis - 87 \nDune - 80", "flipcharts": 19, "whiteboards": 12, "intensiveTables": 57, "legalName": "АНО \"Школа21\"", "legalForm": "АНО", "founder": "ПАО Сбербанк", "taxSystem": "ОСНО", "vat": null, "vatReason": null, "educationLicense": "Да", "educationLicenseBool": true, "activeCoreParticipants": 3153, "poolParticipants": 25138, "graduates": 1678, "csiCustomer": null, "mau": 1311, "wauMauRatio": 0.4807017544, "eventsCount": 16, "eventVisitors": 2301, "internshipsCount": 1666, "csiParticipants": 4.42, "directorName": "Директор 1", "directorEmail": "почта 1", "campusAgeText": "7 лет, 9 месяцев", "directorBirthday": "01.06.1985", "address": "г. Москва, ул. Вятская, д. 27, стр. 42", "periods": {"2026-06": {"activeCoreParticipants": 3153, "poolParticipants": 25138, "graduates": 1678, "mau": 1311, "wauMauRatio": 0.4807017544, "eventsCount": 16, "eventVisitors": 2301, "internshipsCount": 1666}, "2026-07": {"activeCoreParticipants": 3300, "poolParticipants": 26000, "graduates": 1750, "mau": 1350, "wauMauRatio": 0.5, "eventsCount": 18, "eventVisitors": 2400, "internshipsCount": 1750}}, "schedule": {"1": [], "2": ["09.02.2026"], "3": ["02.03.2026", "23.03.2026"], "4": ["20.04.2026"], "5": ["18.05.2026"], "6": ["08.06.2026", "22.06.2026"], "7": ["06.07.2026", "20.07.2026"], "8": ["17.08.2026", "31.08.2026"], "9": ["14.09.2026", "28.09.2026"], "10": ["12.10.2026", "26.10.2026"], "11": ["09.11.2026", "23.11.2026"], "12": ["07.12.2026"]}}, {"id": "казань", "campus": "Казань", "foundationDate": "06.02.2020", "workplaces": 453, "workplacesRaw": "453 рм", "campusType": "филиал", "totalArea": "3379", "usableArea": "3326", "dormitory": "251 место/34 номера", "accessControl": "да", "accessControlBool": true, "clustersCount": 7, "clusterSeatsDetail": "Evolution - 93\nSingularity - 81\nEternity - 80\n\nUniverse - 50\nProgress - 71 \nGenom - 68 \n\nVault - 49\n\nМест для самостоятельно работы суммарно: 58", "conferenceHall": "150 комфортно\n200 возможно", "armDetail": "Evolution - 93\nSingularity - 81\nEternity - 80\n\nUniverse - 50\nProgress - 71 \nGenom - 68 \n\nVault - 49", "flipcharts": 5, "whiteboards": 6, "intensiveTables": 15, "legalName": null, "legalForm": "не указана", "founder": null, "taxSystem": "ОСНО", "vat": null, "vatReason": null, "educationLicense": "Нет", "educationLicenseBool": false, "activeCoreParticipants": 1161, "poolParticipants": 12168, "graduates": 654, "csiCustomer": 4.9, "mau": 544, "wauMauRatio": 0.5272058824, "eventsCount": 5, "eventVisitors": 494, "internshipsCount": 731, "csiParticipants": 4.44, "directorName": "Директор 2", "directorEmail": "почта 2", "campusAgeText": "6 лет, 4 месяцев", "directorBirthday": "02.06.1985", "address": "г. Казань, ул. Спартаковская, д. 2, корп. 2", "periods": {"2026-06": {"activeCoreParticipants": 1161, "poolParticipants": 12168, "graduates": 654, "mau": 544, "wauMauRatio": 0.5272058824, "eventsCount": 5, "eventVisitors": 494, "internshipsCount": 731}, "2026-07": {"activeCoreParticipants": 1200, "poolParticipants": 12500, "graduates": 680, "mau": 560, "wauMauRatio": 0.55, "eventsCount": 6, "eventVisitors": 520, "internshipsCount": 760}}, "schedule": {"1": [], "2": ["02.02.2026", "23.02.2026"], "3": ["16.03.2026"], "4": [], "5": [], "6": ["01.06.2026", "22.06.2026"], "7": ["06.07.2026", "20.07.2026"], "8": ["31.08.2026"], "9": ["21.09.2026"], "10": ["12.10.2026"], "11": [], "12": []}}, {"id": "новосибирск", "campus": "Новосибирск", "foundationDate": "21.07.2021", "workplaces": 390, "workplacesRaw": "390 рм", "campusType": "филиал", "totalArea": "2325", "usableArea": "1640", "dormitory": "нет", "accessControl": "да", "accessControlBool": true, "clustersCount": 8, "clusterSeatsDetail": "Tranquility - 53 \nClarity - 42\nSerenity - 65\nGenesis - 59\nPresense - 42\nExistense - 27\nInfinity - 59 \nSilence - 42", "conferenceHall": "100 (Зал у 2 ГИС)", "armDetail": "Tranquility - 53 \nClarity - 42\nSerenity - 65\nGenesis - 59\nPresense - 42\nExistense - 27\nInfinity - 59 \nSilence - 42", "flipcharts": 5, "whiteboards": 1, "intensiveTables": 1, "legalName": null, "legalForm": "не указана", "founder": null, "taxSystem": "ОСНО", "vat": null, "vatReason": null, "educationLicense": "Да", "educationLicenseBool": true, "activeCoreParticipants": 1005, "poolParticipants": 9780, "graduates": 389, "csiCustomer": 5, "mau": 441, "wauMauRatio": 0.4707482993, "eventsCount": 5, "eventVisitors": 128, "internshipsCount": 582, "csiParticipants": 4.53, "directorName": "Директор 3", "directorEmail": "почта 3", "campusAgeText": "4 лет, 10 месяцев", "directorBirthday": "03.06.1985", "address": "г. Новосибирск, пл. Карла Маркса, д. 7", "periods": {"2026-06": {"activeCoreParticipants": 1005, "poolParticipants": 9780, "graduates": 389, "mau": 441, "wauMauRatio": 0.4707482993, "eventsCount": 5, "eventVisitors": 128, "internshipsCount": 582}, "2026-07": {"activeCoreParticipants": 980, "poolParticipants": 9500, "graduates": 400, "mau": 430, "wauMauRatio": 0.45, "eventsCount": 4, "eventVisitors": 140, "internshipsCount": 600}}, "schedule": {"1": [], "2": ["02.02.2026"], "3": ["02.03.2026"], "4": [], "5": [], "6": ["01.06.2026", "22.06.2026"], "7": ["13.07.2026"], "8": [], "9": ["21.09.2026"], "10": ["12.10.2026"], "11": [], "12": []}}, {"id": "сургут", "campus": "Сургут", "foundationDate": "03.04.2023", "workplaces": 190, "workplacesRaw": "190 рм", "campusType": "франшиза", "totalArea": "3080", "usableArea": "1907", "dormitory": "да, сейчас общежитие нам дает университет \nПостоянно 10 мест, живет основа\nИ просим на бассейны еще по запросу 5-10, но на бассейн дают не всегда", "accessControl": "да", "accessControlBool": true, "clustersCount": 3, "clusterSeatsDetail": "Hydrogen - 72\nCarbon - 72\nSulfur - 47", "conferenceHall": "200", "armDetail": "Hydrogen - 72\nCarbon - 72\nSulfur - 47", "flipcharts": 0, "whiteboards": 15, "intensiveTables": 8, "legalName": "АВТОНОМНАЯ НЕКОММЕРЧЕСКАЯ\nОРГАНИЗАЦИЯ ПОВЫШЕНИЯ УРОВНЯ\nКАЧЕСТВА ОБРАЗОВАНИЯ\nНАСЕЛЕНИЯ \"ШКОЛА 21. ЮГРА\"", "legalForm": "прочее", "founder": "Департамент по управлению государственным имуществом Ханты-Мансийского автономного округа - Югры", "taxSystem": "УСН", "vat": "Нет", "vatReason": "НДС не платим, так как работаем за счет целевой субсидии (НДС уплачивается только за аренду помещения в размере 1 рубля)", "educationLicense": "Да", "educationLicenseBool": true, "activeCoreParticipants": 241, "poolParticipants": 2689, "graduates": 44, "csiCustomer": 5, "mau": 76, "wauMauRatio": 0.5605263158, "eventsCount": 7, "eventVisitors": 41, "internshipsCount": 75, "csiParticipants": 4.33, "directorName": "Директор 4", "directorEmail": "почта 4", "campusAgeText": "3 лет, 2 месяцев", "directorBirthday": "04.06.1985", "address": "г. Сургут, ул. Иосифа Каролинского, д. 14/1", "periods": {"2026-06": {"activeCoreParticipants": 241, "poolParticipants": 2689, "graduates": 44, "mau": 76, "wauMauRatio": 0.5605263158, "eventsCount": 7, "eventVisitors": 41, "internshipsCount": 75}, "2026-07": {"activeCoreParticipants": 250, "poolParticipants": 2750, "graduates": 50, "mau": 80, "wauMauRatio": 0.58, "eventsCount": 8, "eventVisitors": 45, "internshipsCount": 80}}, "schedule": {"1": ["26.01.2026"], "2": ["16.02.2026"], "3": ["16.03.2026"], "4": [], "5": ["18.05.2026"], "6": ["29.06.2026"], "7": [], "8": ["10.08.2026"], "9": ["07.09.2026"], "10": [], "11": [], "12": []}}, {"id": "великий-новгород", "campus": "Великий Новгород", "foundationDate": "18.09.2023", "workplaces": 191, "workplacesRaw": "191 рм", "campusType": "франшиза", "totalArea": "1728,5", "usableArea": "1728,5", "dormitory": "до 50+, но собственность НовГУ", "accessControl": "да", "accessControlBool": true, "clustersCount": 3, "clusterSeatsDetail": "Quark - 114\nLepton - 42\nBoson - 35", "conferenceHall": "Пользуемся конференц залом университета: Амфитеатр на 300, Зал Трансформер на 100-3000 и аудитории на 50-100.\nНо это все по договоренностям и только если они не заняты мероприятиями", "armDetail": "Quark - 114\nLepton - 42\nBoson - 35", "flipcharts": 8, "whiteboards": 13, "intensiveTables": 64.86, "legalName": "Структурное подразделение Новгородского государственного университета имени Ярослава Мудрого", "legalForm": "Структурное подразделение", "founder": null, "taxSystem": "ОСНО", "vat": null, "vatReason": null, "educationLicense": "Да", "educationLicenseBool": true, "activeCoreParticipants": 422, "poolParticipants": 2428, "graduates": 24, "csiCustomer": 4.5, "mau": 53, "wauMauRatio": 0.3924528302, "eventsCount": 90, "eventVisitors": 562, "internshipsCount": 70, "csiParticipants": 4.21, "directorName": "Директор 5", "directorEmail": "почта 5", "campusAgeText": "2 лет, 8 месяцев", "directorBirthday": "05.06.1985", "address": "г. Великий Новгород, ул. Великая, д. 18А", "periods": {"2026-06": {"activeCoreParticipants": 422, "poolParticipants": 2428, "graduates": 24, "mau": 53, "wauMauRatio": 0.3924528302, "eventsCount": 90, "eventVisitors": 562, "internshipsCount": 70}, "2026-07": {"activeCoreParticipants": 410, "poolParticipants": 2400, "graduates": 30, "mau": 55, "wauMauRatio": 0.42, "eventsCount": 95, "eventVisitors": 580, "internshipsCount": 75}}, "schedule": {"1": [], "2": ["16.02.2026"], "3": ["16.03.2026"], "4": [], "5": [], "6": ["08.06.2026"], "7": ["06.07.2026"], "8": ["10.08.2026"], "9": ["28.10.2026"], "10": ["12.10.2026"], "11": [], "12": []}}, {"id": "якутск", "campus": "Якутск", "foundationDate": "09.11.2023", "workplaces": 198, "workplacesRaw": "198 рм", "campusType": "франшиза", "totalArea": "1945", "usableArea": "1750,66", "dormitory": "нет", "accessControl": "да", "accessControlBool": true, "clustersCount": 4, "clusterSeatsDetail": "Ayar - 48; \nErchim - 49; \nSitim -45;\n Tuskul -56", "conferenceHall": "150", "armDetail": "второй этаж - 97; \nтретий этаж 101", "flipcharts": 2, "whiteboards": 10, "intensiveTables": 10, "legalName": "Автономная некоммерческая организация развития системы подготовки кадров в ИТ-сфере «Школа 21. Якутия»", "legalForm": "прочее", "founder": "Министерство инноваций, цифрового развития и инфокоммуникационных технологий Республики Саха (Якутия)", "taxSystem": "УСН", "vat": "Нет", "vatReason": "В связи с применением УСН", "educationLicense": "Да", "educationLicenseBool": true, "activeCoreParticipants": 343, "poolParticipants": 2319, "graduates": 25, "csiCustomer": 5, "mau": 111, "wauMauRatio": 0.5567567568, "eventsCount": 1, "eventVisitors": 27, "internshipsCount": 122, "csiParticipants": 4.27, "directorName": "Директор 6", "directorEmail": "почта 6", "campusAgeText": "2 лет, 7 месяцев", "directorBirthday": "06.06.1985", "address": "г. Якутск, ул. Ойунского, д. 35", "periods": {"2026-06": {"activeCoreParticipants": 343, "poolParticipants": 2319, "graduates": 25, "mau": 111, "wauMauRatio": 0.5567567568, "eventsCount": 1, "eventVisitors": 27, "internshipsCount": 122}, "2026-07": {"activeCoreParticipants": 360, "poolParticipants": 2400, "graduates": 28, "mau": 120, "wauMauRatio": 0.55, "eventsCount": 2, "eventVisitors": 30, "internshipsCount": 130}}, "schedule": {"1": [], "2": ["02.02.2026"], "3": ["02.03.2026", "23.03.2026"], "4": [], "5": ["25.05.2026"], "6": [], "7": [], "8": [], "9": ["14.09.2026"], "10": ["12.10.2026"], "11": [], "12": []}}, {"id": "самарканд", "campus": "Самарканд", "foundationDate": "21.12.2023", "workplaces": 500, "workplacesRaw": "500 рм", "campusType": "франшиза", "totalArea": "4000", "usableArea": "3200", "dormitory": "вместимость на \n178 мест,  \nмебель на 50 человек", "accessControl": "нет", "accessControlBool": false, "clustersCount": 4, "clusterSeatsDetail": "1.Registan-127\n2. Ulug'bek -125\n3. Sherdor -125\n4. Tiila-Kori -125", "conferenceHall": "120", "armDetail": "502", "flipcharts": 2, "whiteboards": 8, "intensiveTables": 9, "legalName": "Негосударственное образовательное учреждение «SHKOLA 21»", "legalForm": "прочее", "founder": "Учредитель: Ходзидакис Николай Василис.", "taxSystem": "ОСНО", "vat": "До 01.08.2025 г являлись плательщиками НДС, а после освобождены от НДС. НДС нет в 2026 г.", "vatReason": "Резиденты Технологического парка программных продуктов и информационных технологий (IT-парк)", "educationLicense": "Да", "educationLicenseBool": true, "activeCoreParticipants": 633, "poolParticipants": 4611, "graduates": 21, "csiCustomer": 4.7, "mau": 315, "wauMauRatio": 0.7066666667, "eventsCount": null, "eventVisitors": 0, "internshipsCount": 63, "csiParticipants": 4.52, "directorName": "Директор 7", "directorEmail": "почта 7", "campusAgeText": "2 лет, 5 месяцев", "directorBirthday": "07.06.1985", "address": "Узбекистан, г. Самарканд, ул. Ибн Сино, 17а", "periods": {"2026-06": {"activeCoreParticipants": 633, "poolParticipants": 4611, "graduates": 21, "mau": 315, "wauMauRatio": 0.7066666667, "eventsCount": null, "eventVisitors": 0, "internshipsCount": 63}, "2026-07": {"activeCoreParticipants": 650, "poolParticipants": 4800, "graduates": 25, "mau": 330, "wauMauRatio": 0.7, "eventsCount": 8, "eventVisitors": 50, "internshipsCount": 70}}, "schedule": null}, {"id": "ярославль", "campus": "Ярославль", "foundationDate": "01.02.2024", "workplaces": 300, "workplacesRaw": "300 рм", "campusType": "франшиза", "totalArea": "2490,1", "usableArea": "2171,15", "dormitory": "отсутствует", "accessControl": "да", "accessControlBool": true, "clustersCount": 4, "clusterSeatsDetail": "Mydriy - 84\nUshakov - 96\nTkachenko - 84\nVolkov - 35", "conferenceHall": "130", "armDetail": "Mydriy - 84\nUshakov - 96\nTkachenko - 84\nVolkov - 35", "flipcharts": 4, "whiteboards": 4, "intensiveTables": 10, "legalName": "Автономная некоммерческая организация повышения уровня качества образования населения \"Школа 21. Ярославия\"", "legalForm": "прочее", "founder": "Министерство цифрового развития Ярославской области", "taxSystem": "ОСНО", "vat": "Да", "vatReason": null, "educationLicense": "Да", "educationLicenseBool": true, "activeCoreParticipants": 410, "poolParticipants": 2302, "graduates": 21, "csiCustomer": 4.8, "mau": 128, "wauMauRatio": 0.4015625, "eventsCount": 9, "eventVisitors": 1127, "internshipsCount": 61, "csiParticipants": 4.18, "directorName": "Директор 8", "directorEmail": "почта 8", "campusAgeText": "2 лет, 4 месяцев", "directorBirthday": "08.06.1985", "address": "г. Ярославль, ул. Победы, д. 14А", "periods": {"2026-06": {"activeCoreParticipants": 410, "poolParticipants": 2302, "graduates": 21, "mau": 128, "wauMauRatio": 0.4015625, "eventsCount": 9, "eventVisitors": 1127, "internshipsCount": 61}, "2026-07": {"activeCoreParticipants": 420, "poolParticipants": 2350, "graduates": 22, "mau": 130, "wauMauRatio": 0.43, "eventsCount": 10, "eventVisitors": 1150, "internshipsCount": 65}}, "schedule": {"1": [], "2": ["09.02.2026"], "3": ["23.03.2026"], "4": [], "5": [], "6": ["08.06.2026", "29.06.2026"], "7": [], "8": [], "9": ["14.09.2026"], "10": ["12.10.2026"], "11": [], "12": []}}, {"id": "магас", "campus": "Магас", "foundationDate": "19.02.2024", "workplaces": 250, "workplacesRaw": "250 рм", "campusType": "франшиза", "totalArea": "3560", "usableArea": "3200", "dormitory": "предоставляется\n40 мест \nв  отеле инвестора", "accessControl": "да", "accessControlBool": true, "clustersCount": 4, "clusterSeatsDetail": "Ezdel - 77\nTesham- 54\nDenal - 75\nSabar- 42", "conferenceHall": "250", "armDetail": "Ezdel - 77\nTesham- 54\nDenal - 75\nSabar- 42", "flipcharts": 1, "whiteboards": 10, "intensiveTables": 10, "legalName": "Автономная некоммерческая организация дополнительного профессионального образования «Академия Информационных Технологий»", "legalForm": "прочее", "founder": "АО «А101 Девелопмент»", "taxSystem": "УСН", "vat": "Да", "vatReason": "НДС 5% в 2026 году", "educationLicense": "Да", "educationLicenseBool": true, "activeCoreParticipants": 576, "poolParticipants": 2500, "graduates": 11, "csiCustomer": null, "mau": 360, "wauMauRatio": 0.6133333333, "eventsCount": 0, "eventVisitors": 110, "internshipsCount": 157, "csiParticipants": 4.52, "directorName": "Директор 9", "directorEmail": "почта 9", "campusAgeText": "2 лет, 3 месяцев", "directorBirthday": "09.06.1985", "address": "г. Магас, ул. Никиты Хрущева, д. 10", "periods": {"2026-06": {"activeCoreParticipants": 576, "poolParticipants": 2500, "graduates": 11, "mau": 360, "wauMauRatio": 0.6133333333, "eventsCount": 0, "eventVisitors": 110, "internshipsCount": 157}, "2026-07": {"activeCoreParticipants": 560, "poolParticipants": 2450, "graduates": 15, "mau": 350, "wauMauRatio": 0.6, "eventsCount": 2, "eventVisitors": 120, "internshipsCount": 165}}, "schedule": {"1": [], "2": ["02.02.2026"], "3": ["30.03.2026"], "4": [], "5": [], "6": [], "7": ["06.07.2026"], "8": ["10.08.2026"], "9": ["14.09.2026"], "10": ["12.10.2026"], "11": [], "12": []}}, {"id": "белгород", "campus": "Белгород", "foundationDate": "11.03.2024", "workplaces": 204, "workplacesRaw": "204 рм", "campusType": "франшиза", "totalArea": "2740", "usableArea": "1760", "dormitory": "да (аренда мест в гостинице. У нас нет понятия мест в общаге.\nУ нас договор с гостиницей.\nСколько заявок от ребят приходит, стараемся всех селить.\nОбычно - это 2-3 человека в бассейне.\nЗафиксированный максимум - 10 человек в одном бассейне.)", "accessControl": "да", "accessControlBool": true, "clustersCount": 3, "clusterSeatsDetail": "Валуй - 54\nОскол - 77\nНежеголь - 73", "conferenceHall": "130", "armDetail": "Валуй - 54\nОскол - 77\nНежеголь - 73", "flipcharts": 6, "whiteboards": 0, "intensiveTables": 8, "legalName": "Автономная некоммерческая организация «Центр современных технологий и систем»", "legalForm": "прочее", "founder": "Учредителем АНО является Белгородская область. Полномочия учредителя осуществляет министерство цифрового развития Белгородской области", "taxSystem": "ОСНО", "vat": "Нет", "vatReason": "В связи с лицензией на образовательную деятельность, поэтому договора на обучение НДС не облагаются", "educationLicense": "Да", "educationLicenseBool": true, "activeCoreParticipants": 315, "poolParticipants": 2016, "graduates": 11, "csiCustomer": 4.42, "mau": 148, "wauMauRatio": 0.4081081081, "eventsCount": 1, "eventVisitors": 958, "internshipsCount": 51, "csiParticipants": 4.34, "directorName": "Директор 10", "directorEmail": "почта 10", "campusAgeText": "2 лет, 3 месяцев", "directorBirthday": "10.06.1985", "address": "г. Белгород, пр. Ватутина, д. 1Г", "periods": {"2026-06": {"activeCoreParticipants": 315, "poolParticipants": 2016, "graduates": 11, "mau": 148, "wauMauRatio": 0.4081081081, "eventsCount": 1, "eventVisitors": 958, "internshipsCount": 51}, "2026-07": {"activeCoreParticipants": 315, "poolParticipants": 2100, "graduates": 12, "mau": 155, "wauMauRatio": 0.44, "eventsCount": 2, "eventVisitors": 1000, "internshipsCount": 55}}, "schedule": {"1": ["26.01.2026"], "2": [], "3": ["02.03.2026"], "4": [], "5": ["25.05.2026"], "6": ["22.06.2026"], "7": [], "8": ["17.08.2026"], "9": ["14.09.2026"], "10": [], "11": [], "12": []}}, {"id": "челябинск", "campus": "Челябинск", "foundationDate": "30.08.2024", "workplaces": 210, "workplacesRaw": "210 рм", "campusType": "франшиза", "totalArea": "4500", "usableArea": "3690", "dormitory": "да (общежитие ВУЗа) на 18 мест", "accessControl": "да", "accessControlBool": true, "clustersCount": 3, "clusterSeatsDetail": "Zyuratkul - 70\nTaganay - 70 \nArkaim - 70", "conferenceHall": "120", "armDetail": "Zyuratkul - 70\nTaganay - 70 \nArkaim - 70", "flipcharts": 2, "whiteboards": 2.3, "intensiveTables": 10, "legalName": "Федеральное государственное автономное образовательное учреждение высшего образования «Южно-Уральский государственный университет (национальный исследовательский университет)»\nФГАОУ ВО «ЮУрГУ (НИУ)» Центр по подготовке кадров в сфере информационных технологий \"Школа 21\"", "legalForm": "ФГАОУ ВО", "founder": "Подразделение университета. Учредитель университета - Министерство науки и высшего образования РФ", "taxSystem": "ОСНО", "vat": "Нет", "vatReason": "В связи с лицензией на образовательную деятельность, поэтому договора на обучение НДС не облагаются", "educationLicense": "Да", "educationLicenseBool": true, "activeCoreParticipants": 508, "poolParticipants": 2012, "graduates": 2, "csiCustomer": 5, "mau": 86, "wauMauRatio": 0.4813953488, "eventsCount": 0, "eventVisitors": 176, "internshipsCount": 33, "csiParticipants": 4.15, "directorName": "Директор 11", "directorEmail": "почта 11", "campusAgeText": "1 лет, 9 месяцев", "directorBirthday": "11.06.1985", "address": "г. Челябинск, пр. Ленина, д. 76а", "periods": {"2026-06": {"activeCoreParticipants": 508, "poolParticipants": 2012, "graduates": 2, "mau": 86, "wauMauRatio": 0.4813953488, "eventsCount": 0, "eventVisitors": 176, "internshipsCount": 33}, "2026-07": {"activeCoreParticipants": 530, "poolParticipants": 2000, "graduates": 5, "mau": 90, "wauMauRatio": 0.5, "eventsCount": 1, "eventVisitors": 180, "internshipsCount": 35}}, "schedule": {"1": [], "2": ["02.02.2026"], "3": ["02.03.2026", "23.03.2026"], "4": [], "5": [], "6": ["08.06.2026"], "7": [], "8": ["17.08.2026"], "9": ["14.09.2026"], "10": ["12.10.2026"], "11": [], "12": []}}, {"id": "южно-сахалинск", "campus": "Южно-сахалинск", "foundationDate": "06.09.2024", "workplaces": 93, "workplacesRaw": "93 рм", "campusType": "франшиза", "totalArea": "990", "usableArea": "870", "dormitory": "60 мест", "accessControl": "да", "accessControlBool": true, "clustersCount": 2, "clusterSeatsDetail": "Анива - 33,\n Таранай - 60", "conferenceHall": "45", "armDetail": "Анива - 33,\n Таранай - 60", "flipcharts": 4, "whiteboards": 4, "intensiveTables": 2, "legalName": "АНО \"НПЦ Крылья Сахалина\" \n АВТОНОМНАЯ НЕКОММЕРЧЕСКАЯ ОРГАНИЗАЦИЯ \"НАУЧНО-ПРОИЗВОДСТВЕННЫЙ ЦЕНТР ИСПЫТАНИЙ И КОМПЕТЕНЦИЙ В СФЕРЕ РАЗВИТИЯ БЕСПИЛОТНЫХ АВИАЦИОННЫХ СИСТЕМ И СРЕДСТВ ЗАЩИТЫ ОТ ИХ ПРОТИВОПРАВНОГО ПРИМЕНЕНИЯ \"КРЫЛЬЯ САХАЛИНА\"", "legalForm": "АНО", "founder": "Министерство цифрового и технологического развития Сахалинской области", "taxSystem": "ОСНО", "vat": "Да", "vatReason": null, "educationLicense": "Да", "educationLicenseBool": true, "activeCoreParticipants": 121, "poolParticipants": 685, "graduates": 1, "csiCustomer": 4.3, "mau": 41, "wauMauRatio": 0.443902439, "eventsCount": 0, "eventVisitors": 785, "internshipsCount": 11, "csiParticipants": 4.3, "directorName": "Директор 13", "directorEmail": "почта 13", "campusAgeText": "1 лет, 9 месяцев", "directorBirthday": "13.06.1985", "address": "г. Южно-Сахалинск, ул. Леонова, д. 38 (БЦ «Айхор»)", "periods": {"2026-06": {"activeCoreParticipants": 121, "poolParticipants": 685, "graduates": 1, "mau": 41, "wauMauRatio": 0.443902439, "eventsCount": 0, "eventVisitors": 785, "internshipsCount": 11}, "2026-07": {"activeCoreParticipants": 130, "poolParticipants": 750, "graduates": 3, "mau": 45, "wauMauRatio": 0.47, "eventsCount": 1, "eventVisitors": 800, "internshipsCount": 15}}, "schedule": {"1": ["19.01.2026"], "2": ["02.02.2026"], "3": ["02.03.2026", "23.03.2026"], "4": [], "5": ["25.05.2026"], "6": ["22.06.2026"], "7": [], "8": [], "9": ["07.09.2026"], "10": ["12.10.2026"], "11": ["16.11.2026"], "12": []}}, {"id": "ташкент", "campus": "Ташкент", "foundationDate": "02.10.2024", "workplaces": 700, "workplacesRaw": "700 рм", "campusType": "франшиза", "totalArea": "8100", "usableArea": "5592", "dormitory": "Есть - 100 мест", "accessControl": "нет", "accessControlBool": false, "clustersCount": 10, "clusterSeatsDetail": "Bukhara - 56\nKhiva - 73\nSamarkand - 97\nTashkent - 97\nAndijan - 73\nJizzakh - 56\nKokand - 78\nNukus - 49\nShakhrisabz - 49\nTermez - 78", "conferenceHall": "300", "armDetail": "Bukhara - 56\nKhiva - 73\nSamarkand - 97\nTashkent - 97\nAndijan - 73\nJizzakh - 56\nKokand - 78\nNukus - 49\nShakhrisabz - 49\nTermez - 78", "flipcharts": 10, "whiteboards": 7, "intensiveTables": 24, "legalName": "Негосударственное образовательное учреждение «SHKOLA 21»", "legalForm": "прочее", "founder": "Учредитель: Ходзидакис Николай Василис.", "taxSystem": "ОСНО", "vat": "До 01.08.2025 г являлись плательщиками НДС, а после освобождены от НДС. НДС нет в 2026 г.", "vatReason": "Резиденты Технологического парка программных продуктов и информационных технологий (IT-парк)", "educationLicense": "Да", "educationLicenseBool": true, "activeCoreParticipants": 1150, "poolParticipants": 7939, "graduates": 19, "csiCustomer": 4.7, "mau": null, "wauMauRatio": null, "eventsCount": null, "eventVisitors": 0, "internshipsCount": 122, "csiParticipants": 4.64, "directorName": "Директор 12", "directorEmail": "почта 12", "campusAgeText": "1 лет, 8 месяцев", "directorBirthday": "12.06.1985", "address": "Узбекистан, г. Ташкент, ул. Зиёлилар, 13", "periods": {"2026-06": {"activeCoreParticipants": 1150, "poolParticipants": 7939, "graduates": 19, "mau": null, "wauMauRatio": null, "eventsCount": null, "eventVisitors": 0, "internshipsCount": 122}, "2026-07": {"activeCoreParticipants": 1200, "poolParticipants": 8200, "graduates": 25, "mau": 340, "wauMauRatio": 0.52, "eventsCount": 6, "eventVisitors": 80, "internshipsCount": 130}}, "schedule": null}, {"id": "анадырь", "campus": "Анадырь", "foundationDate": "22.10.2024", "workplaces": 20, "workplacesRaw": "20 рм", "campusType": "франшиза классы", "totalArea": "95", "usableArea": "95", "dormitory": "нет", "accessControl": "нет", "accessControlBool": false, "clustersCount": 2, "clusterSeatsDetail": "Aurora - 10 \nBlizzard -10", "conferenceHall": "20", "armDetail": "Aurora - 10 \nBlizzard -10", "flipcharts": 0, "whiteboards": 1, "intensiveTables": 1, "legalName": "ГАПОУ ЧАО \"Чукотский многопрофельный коллежд\"", "legalForm": "прочее", "founder": "Чукотский многопрофельный коллежд", "taxSystem": "ОСНО", "vat": "Да", "vatReason": "Общая система налогообложения, НДС платим и нам платят", "educationLicense": "Да", "educationLicenseBool": true, "activeCoreParticipants": 18, "poolParticipants": 48, "graduates": 0, "csiCustomer": 4.3, "mau": null, "wauMauRatio": null, "eventsCount": null, "eventVisitors": 0, "internshipsCount": 0, "csiParticipants": 4.43, "directorName": "Директор 14", "directorEmail": "почта 14", "campusAgeText": "1 лет, 7 месяцев", "directorBirthday": "14.06.1985", "address": "г. Анадырь, ул. Студенческая, д. 3", "periods": {"2026-06": {"activeCoreParticipants": 18, "poolParticipants": 48, "graduates": 0, "mau": null, "wauMauRatio": null, "eventsCount": null, "eventVisitors": 0, "internshipsCount": 0}, "2026-07": {"activeCoreParticipants": 25, "poolParticipants": 60, "graduates": 2, "mau": 25, "wauMauRatio": 0.45, "eventsCount": 2, "eventVisitors": 15, "internshipsCount": 5}}, "schedule": {"1": [], "2": [], "3": [], "4": [], "5": [], "6": [], "7": [], "8": [], "9": [], "10": ["12.10.2026"], "11": [], "12": []}}, {"id": "нижний-новгород", "campus": "Нижний Новгород", "foundationDate": "02.12.2024", "workplaces": 200, "workplacesRaw": "200 рм", "campusType": "франшиза", "totalArea": "3344", "usableArea": "2428,7", "dormitory": "нет", "accessControl": "да", "accessControlBool": true, "clustersCount": 4, "clusterSeatsDetail": "KULIBIN- 52\nPOPOV - 50\nSHUKHOV 58\nNEIMARK 40", "conferenceHall": "200", "armDetail": "KULIBIN 52 АРМ\nPOPOV 50 АРМ\nSHUKHOV 58 АРМ\nNEIMARK 40 АРМ", "flipcharts": 3, "whiteboards": 7, "intensiveTables": 3, "legalName": "Автономная некоммерческая организация «Региональный центр развития системы подготовки кадров в сфере информационных технологий Нижегородской области «Школа 21 Нижний Новгород»", "legalForm": "прочее", "founder": "Автономная некоммерческая организация «Региональный центр поддержки и координации отечественных цифровых технологий и разработчиков «Горький Тех»", "taxSystem": "УСН", "vat": "Нет", "vatReason": "Не превышен установленный НК РФ лимит доходов.", "educationLicense": "Нет", "educationLicenseBool": false, "activeCoreParticipants": 378, "poolParticipants": 1988, "graduates": 0, "csiCustomer": null, "mau": 108, "wauMauRatio": 0.4296296296, "eventsCount": 2, "eventVisitors": 369, "internshipsCount": 27, "csiParticipants": 4.17, "directorName": "Директор 15", "directorEmail": "почта 15", "campusAgeText": "1 лет, 6 месяцев", "directorBirthday": "15.06.1985", "address": "г. Нижний Новгород, ул. Тургенева, д. 30", "periods": {"2026-06": {"activeCoreParticipants": 378, "poolParticipants": 1988, "graduates": 0, "mau": 108, "wauMauRatio": 0.4296296296, "eventsCount": 2, "eventVisitors": 369, "internshipsCount": 27}, "2026-07": {"activeCoreParticipants": 370, "poolParticipants": 2000, "graduates": 1, "mau": 110, "wauMauRatio": 0.45, "eventsCount": 3, "eventVisitors": 380, "internshipsCount": 30}}, "schedule": {"1": [], "2": ["02.02.2026"], "3": ["16.03.2026"], "4": [], "5": [], "6": ["08.06.2026"], "7": ["20.07.2026"], "8": ["31.08.2026"], "9": ["21.09.2026"], "10": ["12.10.2026"], "11": [], "12": []}}, {"id": "магадан", "campus": "Магадан", "foundationDate": "24.12.2024", "workplaces": 30, "workplacesRaw": "30 рм", "campusType": "франшиза классы", "totalArea": "261,8", "usableArea": "202,4", "dormitory": "нет", "accessControl": "нет", "accessControlBool": false, "clustersCount": 2, "clusterSeatsDetail": "Nykla - 18, \nDukcha - 12", "conferenceHall": "30", "armDetail": "Nykla - 18, \nDukcha - 12", "flipcharts": 0, "whiteboards": 3, "intensiveTables": 0, "legalName": "Автономная некоммерческая организация \"Школа 21. Магадан\"", "legalForm": "прочее", "founder": "Министерство цифрового развития и связи Магаданской области", "taxSystem": "УСН", "vat": "Нет", "vatReason": null, "educationLicense": "Нет", "educationLicenseBool": false, "activeCoreParticipants": 24, "poolParticipants": 146, "graduates": 0, "csiCustomer": null, "mau": null, "wauMauRatio": null, "eventsCount": 0, "eventVisitors": 118, "internshipsCount": 1, "csiParticipants": 3.8, "directorName": "Директор 16", "directorEmail": "почта 16", "campusAgeText": "1 лет, 5 месяцев", "directorBirthday": "16.06.1985", "address": "г. Магадан, ул. Кольцевая, 3/8", "periods": {"2026-06": {"activeCoreParticipants": 24, "poolParticipants": 146, "graduates": 0, "mau": null, "wauMauRatio": null, "eventsCount": 0, "eventVisitors": 118, "internshipsCount": 1}, "2026-07": {"activeCoreParticipants": 30, "poolParticipants": 170, "graduates": 1, "mau": 40, "wauMauRatio": 0.44, "eventsCount": 1, "eventVisitors": 130, "internshipsCount": 5}}, "schedule": {"1": [], "2": [], "3": ["02.03.2026", "23.03.2026"], "4": [], "5": [], "6": ["08.06.2026"], "7": ["20.07.2026"], "8": [], "9": ["14.09.2026"], "10": ["12.10.2026"], "11": [], "12": []}}, {"id": "липецк", "campus": "Липецк", "foundationDate": "20.03.2025", "workplaces": 200, "workplacesRaw": "200 рм", "campusType": "франшиза", "totalArea": "3636", "usableArea": "2157,2", "dormitory": "нет", "accessControl": "да", "accessControlBool": true, "clustersCount": 4, "clusterSeatsDetail": "Energy-78\n Time-42 \nMind 40 \nExspanse 42", "conferenceHall": "202", "armDetail": "Energy-78 \nTime-42 \nMind 40\n Exspanse 42", "flipcharts": 3, "whiteboards": 2, "intensiveTables": 7, "legalName": "Автономная некоммерческая организация развития цифровых и информационных технологий «Цифровой регион. Липецк»", "legalForm": "прочее", "founder": "Министерство цифрового развития и искусственного интеллекта Липецкой области", "taxSystem": "УСН", "vat": "да", "vatReason": "НДС с 2026 5%", "educationLicense": "Нет", "educationLicenseBool": false, "activeCoreParticipants": 271, "poolParticipants": 1251, "graduates": 6, "csiCustomer": null, "mau": 152, "wauMauRatio": 0.5407894737, "eventsCount": 22, "eventVisitors": 398, "internshipsCount": 23, "csiParticipants": 4.23, "directorName": "Директор 17", "directorEmail": "почта 17", "campusAgeText": "1 лет, 2 месяцев", "directorBirthday": "17.06.1985", "address": "г. Липецк, ул. Зегеля, д. 1", "periods": {"2026-06": {"activeCoreParticipants": 271, "poolParticipants": 1251, "graduates": 6, "mau": 152, "wauMauRatio": 0.5407894737, "eventsCount": 22, "eventVisitors": 398, "internshipsCount": 23}, "2026-07": {"activeCoreParticipants": 280, "poolParticipants": 1300, "graduates": 8, "mau": 160, "wauMauRatio": 0.55, "eventsCount": 24, "eventVisitors": 420, "internshipsCount": 25}}, "schedule": {"1": [], "2": ["09.02.2026"], "3": ["16.03.2026"], "4": [], "5": [], "6": [], "7": ["06.07.2026"], "8": [], "9": ["14.09.2026"], "10": ["12.10.2026"], "11": [], "12": []}}, {"id": "уфа", "campus": "Уфа", "foundationDate": "04.06.2025", "workplaces": 408, "workplacesRaw": "408 рм", "campusType": "франшиза", "totalArea": "4603,6", "usableArea": "4157,41", "dormitory": "На этапе строительства (ориентировочное заселение 2027 год)  зарезервировано 450 мест", "accessControl": "нет", "accessControlBool": false, "clustersCount": 8, "clusterSeatsDetail": "2 этаж (204):\nKerkis - 38\nVavilov - 56\nMichurin - 72\nKoltsov - 38\n\n3 этаж (204):\nYablochkov - 38\nKorolev - 72\nZhukovsky - 56\nKovalevskaya - 38", "conferenceHall": "306 (231 трибуна, 150 стулья, но одновременно поставить и трибуну, и все стулья невозможно)", "armDetail": "2 этаж - 204\n3 этаж - 204", "flipcharts": 0, "whiteboards": 6, "intensiveTables": 10, "legalName": "Автономная некоммерческая организация развити системы подготовки кадров в сфере информационных технологий \"Школа 21. Башкортостан\"", "legalForm": "прочее", "founder": "Министерство просвещения Республики Башкортостан", "taxSystem": "УСН", "vat": "Нет", "vatReason": "В связи с применением УСН", "educationLicense": "Нет", "educationLicenseBool": false, "activeCoreParticipants": 555, "poolParticipants": 2674, "graduates": 0, "csiCustomer": null, "mau": null, "wauMauRatio": null, "eventsCount": 19, "eventVisitors": 0, "internshipsCount": 3, "csiParticipants": 4.43, "directorName": "Директор 18", "directorEmail": "почта 18", "campusAgeText": "1 лет, 0 месяцев", "directorBirthday": "18.06.1985", "address": "г. Уфа, ул. Заки Валиди, д. 32/2б", "periods": {"2026-06": {"activeCoreParticipants": 555, "poolParticipants": 2674, "graduates": 0, "mau": null, "wauMauRatio": null, "eventsCount": 19, "eventVisitors": 0, "internshipsCount": 3}, "2026-07": {"activeCoreParticipants": 540, "poolParticipants": 2600, "graduates": 0, "mau": 150, "wauMauRatio": 0.48, "eventsCount": 20, "eventVisitors": 80, "internshipsCount": 5}}, "schedule": {"1": [], "2": ["09.02.2026"], "3": ["16.03.2026"], "4": [], "5": [], "6": ["08.06.2026"], "7": ["06.07.2026"], "8": [], "9": ["14.09.2026"], "10": ["12.10.2026"], "11": ["16.11.2026"], "12": ["07.12.2026"]}}, {"id": "омск", "campus": "Омск", "foundationDate": "29.09.2025", "workplaces": 289, "workplacesRaw": "289 рм", "campusType": "франшиза", "totalArea": "4500", "usableArea": "3800", "dormitory": "да (общежитие ВУЗа, предоставляет 50 мест)", "accessControl": "нет", "accessControlBool": false, "clustersCount": 5, "clusterSeatsDetail": "Горохов-52\nКоролёв-64\nДраверт-56\nЛетов-33\nВрубель-83", "conferenceHall": "230", "armDetail": "Горохов-52\nКоролёв-64\nДраверт-56\nЛетов-33\nВрубель-83", "flipcharts": 2, "whiteboards": 3, "intensiveTables": 5, "legalName": "Автономная некоммерческая организация «Омский научно-образовательный центр»", "legalForm": "прочее", "founder": "Акционерное общество \"Агенство развития и инвестиций Омской области\"", "taxSystem": "УСН", "vat": "Нет", "vatReason": "В связи с применением УСН", "educationLicense": "Да", "educationLicenseBool": true, "activeCoreParticipants": 509, "poolParticipants": 1483, "graduates": 0, "csiCustomer": null, "mau": 214, "wauMauRatio": 0.4878504673, "eventsCount": 0, "eventVisitors": 1184, "internshipsCount": 0, "csiParticipants": 4.33, "directorName": "Директор 19", "directorEmail": "почта 19", "campusAgeText": "0 лет, 8 месяцев", "directorBirthday": "19.06.1985", "address": "г. Омск, ул. Ленина, д. 26Б", "periods": {"2026-06": {"activeCoreParticipants": 509, "poolParticipants": 1483, "graduates": 0, "mau": 214, "wauMauRatio": 0.4878504673, "eventsCount": 0, "eventVisitors": 1184, "internshipsCount": 0}, "2026-07": {"activeCoreParticipants": 520, "poolParticipants": 1550, "graduates": 0, "mau": 220, "wauMauRatio": 0.5, "eventsCount": 1, "eventVisitors": 1200, "internshipsCount": 3}}, "schedule": {"1": [], "2": ["09.02.2026"], "3": ["02.03.2026", "30.03.2026"], "4": [], "5": [], "6": ["15.06.2026"], "7": [], "8": [], "9": ["21.09.2026"], "10": ["19.10.2026"], "11": [], "12": []}}, {"id": "пермь", "campus": "Пермь", "foundationDate": "15.12.2025", "workplaces": 100, "workplacesRaw": "100 рм", "campusType": "франшиза", "totalArea": "1188,55", "usableArea": "789,94", "dormitory": "нет", "accessControl": "нет (скуд вуза)", "accessControlBool": null, "clustersCount": 2, "clusterSeatsDetail": "Орион - 54 места, \nКвантор - 42 места", "conferenceHall": "Максимальная вместимость 110 мест, комфортная - 84", "armDetail": "Орион - 54, \nКвантор - 42", "flipcharts": 0, "whiteboards": 2, "intensiveTables": null, "legalName": "Фонд \"Фонд креативных индустрий Пермского края\"", "legalForm": "прочее", "founder": "Пермский край в лице Министерства\nэкономического развития и инвестиций Пермского края", "taxSystem": "УСН", "vat": "Нет", "vatReason": "В связи с применением УСН", "educationLicense": "Нет", "educationLicenseBool": false, "activeCoreParticipants": 128, "poolParticipants": 628, "graduates": 0, "csiCustomer": null, "mau": 65, "wauMauRatio": 0.4738461538, "eventsCount": 0, "eventVisitors": 109, "internshipsCount": 0, "csiParticipants": null, "directorName": "Директор 20", "directorEmail": "почта 20", "campusAgeText": "0 лет, 6 месяцев", "directorBirthday": "20.06.1985", "address": "г. Пермь, шоссе Космонавтов, 111Д", "periods": {"2026-06": {"activeCoreParticipants": 128, "poolParticipants": 628, "graduates": 0, "mau": 65, "wauMauRatio": 0.4738461538, "eventsCount": 0, "eventVisitors": 109, "internshipsCount": 0}, "2026-07": {"activeCoreParticipants": 135, "poolParticipants": 650, "graduates": 0, "mau": 70, "wauMauRatio": 0.49, "eventsCount": 1, "eventVisitors": 120, "internshipsCount": 2}}, "schedule": {"1": [], "2": ["02.02.2026"], "3": [], "4": [], "5": ["18.05.2026"], "6": ["15.06.2026"], "7": [], "8": ["17.08.2026"], "9": ["28.09.2026"], "10": [], "11": [], "12": []}}, {"id": "ставрополь", "campus": "Ставрополь", "foundationDate": "17.12.2025", "workplaces": 200, "workplacesRaw": "200 рм", "campusType": "не указан", "totalArea": "здание -  4676 (эксплуатируемые этажи кампуса - 2956,1)", "usableArea": "2107,9", "dormitory": "Да/100 мест (собственное здание 3 177 м²)", "accessControl": null, "accessControlBool": null, "clustersCount": null, "clusterSeatsDetail": null, "conferenceHall": null, "armDetail": null, "flipcharts": null, "whiteboards": null, "intensiveTables": null, "legalName": null, "legalForm": "не указана", "founder": null, "taxSystem": "не указана", "vat": null, "vatReason": null, "educationLicense": null, "educationLicenseBool": null, "activeCoreParticipants": 101, "poolParticipants": 899, "graduates": 0, "csiCustomer": null, "mau": 48, "wauMauRatio": 0.4916666667, "eventsCount": 5, "eventVisitors": 54, "internshipsCount": 0, "csiParticipants": null, "directorName": "Директор 21", "directorEmail": "почта 21", "campusAgeText": "0 лет, 5 месяцев", "directorBirthday": "21.06.1985", "address": "г. Ставрополь, ул. Ивана Щипакина, д. 8", "periods": {"2026-06": {"activeCoreParticipants": 101, "poolParticipants": 899, "graduates": 0, "mau": 48, "wauMauRatio": 0.4916666667, "eventsCount": 5, "eventVisitors": 54, "internshipsCount": 0}, "2026-07": {"activeCoreParticipants": 110, "poolParticipants": 950, "graduates": 0, "mau": 55, "wauMauRatio": 0.5, "eventsCount": 6, "eventVisitors": 60, "internshipsCount": 2}}, "schedule": {"1": [], "2": ["02.02.2026"], "3": [], "4": [], "5": [], "6": ["15.06.2026"], "7": ["13.07.2026"], "8": ["17.08.2026"], "9": ["14.09.2026"], "10": [], "11": [], "12": []}}, {"id": "волгоград", "campus": "Волгоград", "foundationDate": "25.05.2026", "workplaces": 283, "workplacesRaw": "283 рм", "campusType": "не указан", "totalArea": "3887,55", "usableArea": "2750,29", "dormitory": "нет", "accessControl": "нет", "accessControlBool": false, "clustersCount": null, "clusterSeatsDetail": null, "conferenceHall": null, "armDetail": null, "flipcharts": null, "whiteboards": null, "intensiveTables": null, "legalName": null, "legalForm": "не указана", "founder": null, "taxSystem": "не указана", "vat": null, "vatReason": null, "educationLicense": null, "educationLicenseBool": null, "activeCoreParticipants": 128, "poolParticipants": 987, "graduates": 0, "csiCustomer": null, "mau": 53, "wauMauRatio": 0.4377358491, "eventsCount": 0, "eventVisitors": 260, "internshipsCount": 0, "csiParticipants": null, "directorName": "Директор 22", "directorEmail": "почта 22", "campusAgeText": "0 лет, 0 месяцев", "directorBirthday": "22.06.1985", "address": "г. Волгоград, ул. Социалистическая, д. 15", "periods": {"2026-06": {"activeCoreParticipants": 128, "poolParticipants": 987, "graduates": 0, "mau": 53, "wauMauRatio": 0.4377358491, "eventsCount": 0, "eventVisitors": 260, "internshipsCount": 0}, "2026-07": {"activeCoreParticipants": 120, "poolParticipants": 1000, "graduates": 0, "mau": 60, "wauMauRatio": 0.46, "eventsCount": 1, "eventVisitors": 280, "internshipsCount": 2}}, "schedule": {"1": [], "2": ["02.02.2026"], "3": [], "4": ["20.04.2026"], "5": ["11.05.2026"], "6": [], "7": ["20.07.2026"], "8": ["17.08.2026"], "9": ["14.09.2026"], "10": [], "11": [], "12": []}}, {"id": "ижевск", "campus": "Ижевск", "foundationDate": null, "workplaces": 100, "workplacesRaw": "100 рм", "campusType": "не указан", "totalArea": "1599 м2", "usableArea": null, "dormitory": null, "accessControl": null, "accessControlBool": null, "clustersCount": null, "clusterSeatsDetail": null, "conferenceHall": null, "armDetail": null, "flipcharts": null, "whiteboards": null, "intensiveTables": null, "legalName": null, "legalForm": "не указана", "founder": null, "taxSystem": "не указана", "vat": null, "vatReason": null, "educationLicense": null, "educationLicenseBool": null, "activeCoreParticipants": 0, "poolParticipants": 209, "graduates": 0, "csiCustomer": null, "mau": null, "wauMauRatio": null, "eventsCount": null, "eventVisitors": null, "internshipsCount": null, "csiParticipants": null, "directorName": "Директор 23", "directorEmail": "почта 23", "campusAgeText": null, "directorBirthday": "23.06.1985", "address": "г. Ижевск, ул. Красная, д. 105", "periods": {"2026-06": {"activeCoreParticipants": 0, "poolParticipants": 209, "graduates": 0, "mau": null, "wauMauRatio": null, "eventsCount": null, "eventVisitors": null, "internshipsCount": null}, "2026-07": {"activeCoreParticipants": 5, "poolParticipants": 220, "graduates": 0, "mau": 30, "wauMauRatio": 0.42, "eventsCount": 2, "eventVisitors": 20, "internshipsCount": 2}}, "schedule": {"1": [], "2": [], "3": [], "4": [], "5": [], "6": ["15.06.2026"], "7": [], "8": ["17.08.2026"], "9": ["21.09.2026"], "10": ["12.10.2026"], "11": [], "12": []}}], "norms": {"growthMetrics": ["activeCoreParticipants", "poolParticipants", "graduates", "mau", "wauMauRatio", "eventsCount", "eventVisitors", "internshipsCount"], "csiCustomer": {"red": 4.2, "yellow": 4.5}, "csiParticipants": {"red": 4.3}}, "periodsAvailable": ["2026-06", "2026-07"], "periodLabels": {"2026-06": "01.06.2026", "2026-07": "01.07.2026"}}</script>
+<script>
+/* ================= Дашборд сети кампусов «Школа 21» ================= */
+'use strict';
+
+const $ = (sel, root) => (root || document).querySelector(sel);
+const $$ = (sel, root) => Array.from((root || document).querySelectorAll(sel));
+
+let DATA = null;
+
+const MONTHS = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+
+const ICONS = {
+  building: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M9 21v-3h6v3"/><path d="M8 7h2M8 11h2M8 15h2M14 7h2M14 11h2M14 15h2"/></svg>',
+  user: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c0-3.5 3.1-6 7-6s7 2.5 7 6"/></svg>',
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>',
+  cross: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  dash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 12h12"/></svg>',
+  doc: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l4 4v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v4h4"/><path d="M9 13h6M9 17h6"/></svg>',
+  download: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="M7 11l5 5 5-5"/><path d="M5 19h14"/></svg>',
+  chevronDown: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>',
+  printer: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6"/><rect x="4" y="9" width="16" height="8" rx="1"/><path d="M6 17v4h12v-4"/></svg>',
+  close: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  pin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.1-7-11.5A7 7 0 0 1 19 9.5C19 14.9 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.4"/></svg>',
+};
+
+/* ---------------- formatting helpers ---------------- */
+function escapeHtml(s){
+  if (s === null || s === undefined) return '';
+  return String(s).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+}
+function isEmpty(v){ return v === null || v === undefined || v === ''; }
+function fmtInt(n){ return isEmpty(n) ? '—' : Number(n).toLocaleString('ru-RU'); }
+function fmtRatio(n){ return isEmpty(n) ? '—' : Math.round(n*100) + '%'; }
+function fmtCsi(n){ return isEmpty(n) ? '—' : String(n).replace('.', ','); }
+function fmtText(v){ return isEmpty(v) ? '—' : v; }
+function fmtMultiline(v){ return isEmpty(v) ? '—' : escapeHtml(v).replace(/\n/g,'<br>'); }
+function fmtRuDateFromIso(iso){
+  if (!iso) return '—';
+  const [y,m,d] = iso.split('-');
+  return `${d}.${m}.${y}`;
+}
+function todayIso(){
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function todayRu(){
+  const d = new Date();
+  return `${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}.${d.getFullYear()}`;
+}
+function parseRuDate(str){
+  const m = /(\d{2})\.(\d{2})\.(\d{4})/.exec(str);
+  if (!m) return null;
+  return new Date(Number(m[3]), Number(m[2])-1, Number(m[1]));
+}
+function startOfDay(d){ return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+function diffDaysFromToday(date){
+  const today = startOfDay(new Date());
+  return Math.round((startOfDay(date) - today) / 86400000);
+}
+function yearFromRuDate(str){
+  const m = /\.(\d{4})$/.exec(str || '');
+  return m ? m[1] : null;
+}
+function ruPlural(n, forms){
+  const mod10 = n % 10, mod100 = n % 100;
+  if (mod10 === 1 && mod100 !== 11) return forms[0];
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return forms[1];
+  return forms[2];
+}
+function campusAge(foundationDateStr){
+  const fd = parseRuDate(foundationDateStr);
+  if (!fd) return null;
+  const today = new Date();
+  let years = today.getFullYear() - fd.getFullYear();
+  let months = today.getMonth() - fd.getMonth();
+  let days = today.getDate() - fd.getDate();
+  if (days < 0) months -= 1;
+  if (months < 0){ years -= 1; months += 12; }
+  if (years < 0) return null;
+  const yearWord = ruPlural(years, ['год','года','лет']);
+  const monthWord = ruPlural(months, ['месяц','месяца','месяцев']);
+  return `${years} ${yearWord}, ${months} ${monthWord}`;
+}
+
+/* ---------------- generic multiselect filter component ---------------- */
+function createMultiselect({items, selected, onChange, placeholderAll}){
+  const wrap = document.createElement('div'); wrap.className = 'ms';
+  const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'ms-btn';
+  const panel = document.createElement('div'); panel.className = 'ms-panel';
+  panel.innerHTML = `
+    <input class="ms-search" type="text" placeholder="Поиск кампуса…">
+    <div class="ms-actions"><button type="button" data-act="all">Выбрать все</button><button type="button" data-act="none">Сбросить</button></div>
+    <div class="ms-list"></div>`;
+  wrap.appendChild(btn); wrap.appendChild(panel);
+
+  function renderList(filter){
+    filter = (filter || '').toLowerCase();
+    const list = panel.querySelector('.ms-list');
+    list.innerHTML = '';
+    items.filter(it => it.label.toLowerCase().includes(filter)).forEach(it => {
+      const row = document.createElement('label'); row.className = 'ms-item';
+      const cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = selected.has(it.id);
+      cb.addEventListener('change', () => {
+        if (cb.checked) selected.add(it.id); else selected.delete(it.id);
+        updateBtnLabel(); onChange();
+      });
+      const span = document.createElement('span'); span.textContent = it.label;
+      row.appendChild(cb); row.appendChild(span);
+      list.appendChild(row);
+    });
+  }
+  function updateBtnLabel(){
+    const n = selected.size;
+    btn.innerHTML = (n === 0 ? (placeholderAll || 'Все кампусы') : `Выбрано: ${n}`) + ICONS.chevronDown;
+  }
+  panel.querySelector('.ms-search').addEventListener('input', e => renderList(e.target.value));
+  panel.querySelector('[data-act="all"]').addEventListener('click', () => {
+    items.forEach(it => selected.add(it.id));
+    renderList(panel.querySelector('.ms-search').value); updateBtnLabel(); onChange();
+  });
+  panel.querySelector('[data-act="none"]').addEventListener('click', () => {
+    selected.clear();
+    renderList(panel.querySelector('.ms-search').value); updateBtnLabel(); onChange();
+  });
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    $$('.ms-panel.open').forEach(p => { if (p !== panel) p.classList.remove('open'); });
+    panel.classList.toggle('open');
+  });
+  document.addEventListener('click', e => { if (!wrap.contains(e.target)) panel.classList.remove('open'); });
+
+  renderList(''); updateBtnLabel();
+  return wrap;
+}
+
+/* ===================== Block 1: Сводный дашборд (KPI) ===================== */
+const KPI_COLUMNS = [
+  {key:'campus',               label:'Кампус',                                   period:false, type:'text'},
+  {key:'workplaces',           label:'Кол-во рабочих мест',                      period:false, type:'int'},
+  {key:'activeCoreParticipants', label:'Участников Основы, накоп.',              period:true,  type:'int', trend:true},
+  {key:'poolParticipants',     label:'Участников бассейна, накоп.',              period:true,  type:'int', trend:true},
+  {key:'graduates',            label:'Выпускников, накоп.',                      period:true,  type:'int', trend:true},
+  {key:'csiCustomer',          label:'CSI рег. заказчика',                       period:false, type:'csi', normKey:'csiCustomer'},
+  {key:'mau',                  label:'MAU (основа+выпускники)',                  period:true,  type:'int', trend:true},
+  {key:'wauMauRatio',          label:'WAU/MAU основы',                           period:true,  type:'ratio', trend:true},
+  {key:'eventsCount',          label:'Кол-во мероприятий',                       period:true,  type:'int', trend:true},
+  {key:'eventVisitors',        label:'Посетивших мероприятия',                   period:true,  type:'int', trend:true},
+  {key:'internshipsCount',     label:'Стажировок от партнёров',                  period:true,  type:'int', trend:true},
+  {key:'csiParticipants',      label:'CSI участников',                           period:false, type:'csi', normKey:'csiParticipants'},
+];
+
+const b1State = { period:'2026-07', sortKey:'campus', sortDir:'asc', selected:new Set(), year:'all', criticality:'all', visibleCols:new Set(KPI_COLUMNS.filter(c => c.key !== 'campus').map(c => c.key)) };
+const GROWTH_KEYS = KPI_COLUMNS.filter(c => c.trend).map(c => c.key);
+
+function rawTrend(c, key){
+  const prev = c.periods['2026-06'] ? c.periods['2026-06'][key] : null;
+  const cur = c.periods['2026-07'] ? c.periods['2026-07'][key] : null;
+  if (isEmpty(prev) || isEmpty(cur)) return null;
+  if (cur > prev) return 'up';
+  if (cur < prev) return 'down';
+  return 'flat';
+}
+function campusOverallZone(c){
+  const counts = {red:0, yellow:0, green:0};
+  let any = false;
+  GROWTH_KEYS.forEach(key => {
+    const t = rawTrend(c, key);
+    if (t === null) return;
+    any = true;
+    if (t === 'up') counts.green++;
+    else if (t === 'down') counts.red++;
+    else counts.yellow++;
+  });
+  if (!any) return null;
+  let best = 'red';
+  ['yellow','green'].forEach(k => { if (counts[k] > counts[best]) best = k; });
+  return best;
+}
+const ZONE_LABEL = {green:'Зелёная зона', yellow:'Жёлтая зона', red:'Красная зона'};
+
+function b1Value(c, col){
+  if (col.key === 'campus') return c.campus;
+  return col.period ? (c.periods[b1State.period] ? c.periods[b1State.period][col.key] : null) : c[col.key];
+}
+function b1Trend(c, col){
+  if (!col.trend || b1State.period === '2026-06') return null;
+  const prev = c.periods['2026-06'] ? c.periods['2026-06'][col.key] : null;
+  const cur = c.periods['2026-07'] ? c.periods['2026-07'][col.key] : null;
+  if (isEmpty(prev) || isEmpty(cur)) return null;
+  if (cur > prev) return 'up';
+  if (cur < prev) return 'down';
+  return 'flat';
+}
+function csiStatus(key, val){
+  if (isEmpty(val)) return null;
+  if (key === 'csiCustomer') return val < 4.2 ? 'red' : (val <= 4.5 ? 'yellow' : 'green');
+  if (key === 'csiParticipants') return val < 4.3 ? 'red' : 'green';
+  return null;
+}
+function renderKpiCell(c, col){
+  const val = b1Value(c, col);
+  if (col.key === 'campus'){
+    return escapeHtml(c.campus);
+  }
+  if (isEmpty(val)) return '<span class="dash">—</span>';
+  if (col.type === 'csi'){
+    const st = csiStatus(col.normKey, val);
+    const cls = st ? `csi-${st}` : '';
+    return `<span class="csi-pill ${cls}">${fmtCsi(val)}</span>`;
+  }
+  let text = col.type === 'ratio' ? fmtRatio(val) : fmtInt(val);
+  const tr = b1Trend(c, col);
+  if (tr){
+    const sym = tr === 'up' ? '▲' : tr === 'down' ? '▼' : '–';
+    text += `<span class="trend ${tr}">${sym}</span>`;
+  }
+  return text;
+}
+
+function b1FilteredCampuses(){
+  let list = DATA.campuses;
+  if (b1State.selected.size > 0) list = list.filter(c => b1State.selected.has(c.id));
+  if (b1State.year !== 'all') list = list.filter(c => yearFromRuDate(c.foundationDate) === b1State.year);
+  if (b1State.criticality !== 'all') {
+    if (b1State.criticality === 'none') list = list.filter(c => campusOverallZone(c) === null);
+    else list = list.filter(c => campusOverallZone(c) === b1State.criticality);
+  }
+  return list;
+}
+function b1VisibleColumns(){
+  return KPI_COLUMNS.filter(col => col.key === 'campus' || b1State.visibleCols.size === 0 || b1State.visibleCols.has(col.key));
+}
+function b1NumericSortValue(val, col){
+  if (isEmpty(val)) return null;
+  if (col.key === 'campus' || col.type === 'text') return null;
+  const cleaned = String(val).replace(/\s/g, '').replace(',', '.').replace('%', '');
+  const n = Number(cleaned);
+  return Number.isFinite(n) ? n : null;
+}
+function b1DefaultSortDir(col){
+  return (col && col.key !== 'campus' && col.type !== 'text') ? 'desc' : 'asc';
+}
+function b1SetSort(key){
+  if (b1State.sortKey === key) {
+    b1State.sortDir = b1State.sortDir === 'asc' ? 'desc' : 'asc';
+  } else {
+    b1State.sortKey = key;
+    b1State.sortDir = b1DefaultSortDir(KPI_COLUMNS.find(c => c.key === key));
+  }
+}
+function b1CompareCampuses(a, b, col, dir){
+  const va = b1Value(a, col), vb = b1Value(b, col);
+  if (isEmpty(va) && isEmpty(vb)) return 0;
+  if (isEmpty(va)) return 1;
+  if (isEmpty(vb)) return -1;
+  if (col.key === 'campus' || col.type === 'text') {
+    return String(va).localeCompare(String(vb), 'ru') * dir;
+  }
+  const na = b1NumericSortValue(va, col), nb = b1NumericSortValue(vb, col);
+  if (na !== null && nb !== null) return (na - nb) * dir;
+  return String(va).localeCompare(String(vb), 'ru') * dir;
+}
+function b1SortedCampuses(){
+  const col = KPI_COLUMNS.find(k => k.key === b1State.sortKey);
+  if (!col) return b1FilteredCampuses();
+  const list = b1FilteredCampuses().slice();
+  const dir = b1State.sortDir === 'asc' ? 1 : -1;
+  list.sort((a,b) => {
+    const cmp = b1CompareCampuses(a, b, col, dir);
+    if (cmp !== 0) return cmp;
+    return String(a.campus).localeCompare(String(b.campus), 'ru');
+  });
+  return list;
+}
+
+function topNForMetric(col, n){
+  return DATA.campuses
+    .map(c => ({c, v: b1Value(c, col)}))
+    .filter(x => !isEmpty(x.v))
+    .sort((a,b) => {
+      const na = b1NumericSortValue(a.v, col), nb = b1NumericSortValue(b.v, col);
+      if (na !== null && nb !== null) return nb - na;
+      return String(b.v).localeCompare(String(a.v), 'ru');
+    })
+    .slice(0, n || 3);
+}
+function fmtKpiValue(col, v){
+  if (isEmpty(v)) return '—';
+  if (col.type === 'ratio') return fmtRatio(v);
+  if (col.type === 'csi') return fmtCsi(v);
+  return fmtInt(v);
+}
+function setZoneFilter(zone){
+  b1State.criticality = (b1State.criticality === zone) ? 'all' : zone;
+  const sel = $('#b1Criticality');
+  if (sel) sel.value = b1State.criticality;
+  renderZoneSummary();
+  renderBlock1Table();
+}
+function renderZoneSummary(){
+  const counts = {green:0, yellow:0, red:0, none:0};
+  DATA.campuses.forEach(c => {
+    const z = campusOverallZone(c);
+    if (z) counts[z]++; else counts.none++;
+  });
+  const total = DATA.campuses.length;
+  const pct = n => total ? Math.round(n / total * 100) : 0;
+  const active = z => b1State.criticality === z ? ' active' : '';
+  const zoneCard = (zone, cls, num, lbl, sub) => `
+    <button type="button" class="zone-card ${cls}${active(zone)}" data-zone="${zone}" aria-pressed="${b1State.criticality === zone}">
+      <div class="zone-num">${num}</div>
+      <div class="zone-lbl">${lbl}</div>
+      <div class="zone-pct">${sub}</div>
+    </button>`;
+  $('#b1ZoneSummary').innerHTML =
+    zoneCard('green', 'zone-green', counts.green, 'кампусов в зелёной зоне', `${pct(counts.green)}% сети`) +
+    zoneCard('yellow', 'zone-yellow', counts.yellow, 'кампусов в жёлтой зоне', `${pct(counts.yellow)}% сети`) +
+    zoneCard('red', 'zone-red', counts.red, 'кампусов в красной зоне', `${pct(counts.red)}% сети`) +
+    (counts.none ? zoneCard('none', 'zone-muted', counts.none, 'без данных для оценки', 'нет сравнения периодов') : '');
+  $$('#b1ZoneSummary [data-zone]').forEach(btn => {
+    btn.addEventListener('click', () => setZoneFilter(btn.dataset.zone));
+  });
+}
+function renderBlock1Top3(){
+  const metricCols = KPI_COLUMNS.filter(c => c.key !== 'campus');
+  $('#b1Top3Grid').innerHTML = metricCols.map(col => {
+    const top = topNForMetric(col, 3);
+    if (!top.length) return '';
+    return `
+      <div class="top3-card">
+        <div class="top3-title">${escapeHtml(col.label)}</div>
+        <ol>${top.map((x,i) => `<li><span class="rank">${i+1}</span><span class="nm">${escapeHtml(x.c.campus)}</span><b>${fmtKpiValue(col, x.v)}</b></li>`).join('')}</ol>
+      </div>`;
+  }).join('');
+}
+
+function buildBlock1(){
+  const section = $('#block1');
+  const campusItems = DATA.campuses.map(c => ({id:c.id, label:c.campus}));
+  const ms = createMultiselect({
+    items: campusItems, selected: b1State.selected,
+    onChange: renderBlock1Table,
+    placeholderAll: 'Все кампусы'
+  });
+  const yearOptions = Array.from(new Set(DATA.campuses.map(c => yearFromRuDate(c.foundationDate)).filter(Boolean))).sort();
+  const metricCols = KPI_COLUMNS.filter(c => c.key !== 'campus');
+
+  section.innerHTML = `
+    <div class="block-head">
+      <h1>Сводный дашборд</h1>
+      <p>Измеримые показатели по всем кампусам. Кликните по заголовку столбца для сортировки: метрики — сначала самые большие; повторный клик меняет направление. Карточки зон фильтруют таблицу.</p>
+    </div>
+
+    <div class="zone-summary" id="b1ZoneSummary"></div>
+
+    <details class="disclosure b1-top3">
+      <summary>Топ-3 кампуса по каждой метрике</summary>
+      <div class="top3-grid" id="b1Top3Grid" style="margin-top:10px;"></div>
+    </details>
+
+    <div class="filterbar">
+      <div class="field">
+        <label>Отчётный период</label>
+        <select id="b1Period">
+          <option value="2026-06">01.06.2026</option>
+          <option value="2026-07" selected>01.07.2026</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Кампусы</label>
+        <div id="b1MsSlot"></div>
+      </div>
+      <div class="field"><label>Год открытия</label>
+        <select id="b1Year"><option value="all">Все</option>${yearOptions.map(y => `<option value="${y}">${y}</option>`).join('')}</select>
+      </div>
+      <div class="field"><label>Уровень критичности</label>
+        <select id="b1Criticality">
+          <option value="all">Все</option>
+          <option value="green">Зелёная зона</option>
+          <option value="yellow">Жёлтая зона</option>
+          <option value="red">Красная зона</option>
+          <option value="none">Без данных для оценки</option>
+        </select>
+      </div>
+      <button class="btn-clear" id="b1Clear">Сбросить фильтры</button>
+    </div>
+    <div class="col-toggle-bar">
+      <span class="col-toggle-label">Столбцы:</span>
+      <div class="col-toggle-row" id="b1ColToggles">
+        ${metricCols.map(col => `<button type="button" class="col-toggle active" data-col="${col.key}">${escapeHtml(col.label)}</button>`).join('')}
+      </div>
+      <button type="button" class="col-toggle-reset" id="b1ColReset">Показать все</button>
+    </div>
+    <div class="table-scroll">
+      <table class="kpi">
+        <thead id="b1Thead"></thead>
+        <tbody id="b1Tbody"></tbody>
+      </table>
+    </div>`;
+  $('#b1MsSlot').appendChild(ms);
+  $('#b1Period').value = b1State.period;
+  $('#b1Period').addEventListener('change', e => { b1State.period = e.target.value; renderBlock1Top3(); renderBlock1Table(); });
+  $('#b1Year').addEventListener('change', e => { b1State.year = e.target.value; renderBlock1Table(); });
+  $('#b1Criticality').addEventListener('change', e => { b1State.criticality = e.target.value; renderZoneSummary(); renderBlock1Table(); });
+  $('#b1Clear').addEventListener('click', () => {
+    b1State.selected.clear(); b1State.year = 'all'; b1State.criticality = 'all';
+    b1State.sortKey = 'campus'; b1State.sortDir = 'asc';
+    b1State.visibleCols = new Set(metricCols.map(c => c.key));
+    section.querySelectorAll('.ms-list .ms-item input').forEach(i => i.checked = false);
+    section.querySelector('.ms-btn').innerHTML = 'Все кампусы' + ICONS.chevronDown;
+    $('#b1Year').value = 'all';
+    $('#b1Criticality').value = 'all';
+    $$('.col-toggle', section).forEach(btn => btn.classList.add('active'));
+    renderZoneSummary();
+    renderBlock1Table();
+  });
+  $$('.col-toggle', section).forEach(btn => {
+    btn.addEventListener('click', () => {
+      const key = btn.dataset.col;
+      if (b1State.visibleCols.has(key)){
+        b1State.visibleCols.delete(key);
+        btn.classList.remove('active');
+        if (b1State.sortKey === key) { b1State.sortKey = 'campus'; b1State.sortDir = 'asc'; }
+      }
+      else { b1State.visibleCols.add(key); btn.classList.add('active'); }
+      renderBlock1Table();
+    });
+  });
+  $('#b1ColReset').addEventListener('click', () => {
+    b1State.visibleCols = new Set(metricCols.map(c => c.key));
+    $$('.col-toggle', section).forEach(btn => btn.classList.add('active'));
+    renderBlock1Table();
+  });
+  renderZoneSummary();
+  renderBlock1Top3();
+  renderBlock1Table();
+}
+
+function renderBlock1Thead(section){
+  const cols = b1VisibleColumns();
+  const thead = $('#b1Thead', section);
+  thead.innerHTML = `<tr>${cols.map(c => {
+    const sorted = c.key === b1State.sortKey;
+    const arrow = sorted ? (b1State.sortDir === 'desc' ? '▼' : '▲') : '';
+    const title = sorted
+      ? (b1State.sortDir === 'desc' ? 'Сортировка: по убыванию' : 'Сортировка: по возрастанию')
+      : 'Сортировать';
+    return `<th data-key="${c.key}" class="${sorted ? 'sorted' : ''}" title="${title}">${escapeHtml(c.label)}${arrow ? `<span class="sort-ind">${arrow}</span>` : ''}</th>`;
+  }).join('')}</tr>`;
+  $$('th', thead).forEach(th => {
+    th.addEventListener('click', () => {
+      b1SetSort(th.dataset.key);
+      renderBlock1Table();
+    });
+  });
+  return cols;
+}
+
+function renderBlock1Table(){
+  const section = $('#block1');
+  const cols = renderBlock1Thead(section);
+  const list = b1SortedCampuses();
+  const tbody = $('#b1Tbody', section);
+  if (!list.length){
+    tbody.innerHTML = `<tr><td colspan="${cols.length}" style="text-align:center;color:var(--muted);font-family:var(--font-body);padding:30px;">Нет кампусов под текущий фильтр</td></tr>`;
+  } else {
+    tbody.innerHTML = list.map(c => `<tr>${cols.map(col => {
+      const val = b1Value(c, col);
+      const dashClass = (col.key !== 'campus' && isEmpty(val)) ? ' dash' : '';
+      return `<td class="${dashClass}">${renderKpiCell(c, col)}</td>`;
+    }).join('')}</tr>`).join('');
+  }
+}
+
+/* ===================== Block 2: Карточки кампусов ===================== */
+const b2State = { selected:new Set(), minWp:null, maxWp:null, tax:'all', year:'all', type:'all', skud:'all' };
+
+function b2Predicate(c){
+  if (b2State.selected.size > 0 && !b2State.selected.has(c.id)) return false;
+  if (b2State.minWp != null && (isEmpty(c.workplaces) || c.workplaces < b2State.minWp)) return false;
+  if (b2State.maxWp != null && (isEmpty(c.workplaces) || c.workplaces > b2State.maxWp)) return false;
+  if (b2State.tax !== 'all' && c.taxSystem !== b2State.tax) return false;
+  if (b2State.year !== 'all' && yearFromRuDate(c.foundationDate) !== b2State.year) return false;
+  if (b2State.type !== 'all' && c.campusType !== b2State.type) return false;
+  if (b2State.skud !== 'all'){
+    const lab = c.accessControlBool === true ? 'yes' : c.accessControlBool === false ? 'no' : 'unknown';
+    if (lab !== b2State.skud) return false;
+  }
+  return true;
+}
+
+function boolBadge(value, yesLabel, noLabel, unknownLabel){
+  if (value === true) return `<span class="badge yes">${ICONS.check}${escapeHtml(yesLabel)}</span>`;
+  if (value === false) return `<span class="badge no">${ICONS.cross}${escapeHtml(noLabel)}</span>`;
+  return `<span class="badge unknown">${ICONS.dash}${escapeHtml(unknownLabel || 'не указано')}</span>`;
+}
+function detailBlock(label, value){
+  if (isEmpty(value)) return '';
+  const long = String(value).length > 46 || String(value).includes('\n');
+  if (!long) return `<div class="kv"><span class="k">${escapeHtml(label)}</span><span class="v">${escapeHtml(value)}</span></div>`;
+  return `<details class="disclosure"><summary>${escapeHtml(label)}</summary><pre>${fmtMultiline(value)}</pre></details>`;
+}
+function typePillClass(type){
+  if (isEmpty(type)) return 'tp-unknown';
+  const t = String(type).trim().toLowerCase();
+  if (t === 'франшиза классы') return 'tp-franchise-class';
+  if (t === 'франшиза') return 'tp-franchise';
+  if (t === 'филиал') return 'tp-filial';
+  return 'tp-unknown';
+}
+
+function campusCardHtml(c){
+  const clusterSummary = (!isEmpty(c.clustersCount) && !isEmpty(c.workplaces))
+    ? `${c.clustersCount} кластеров, всего ${fmtInt(c.workplaces)} мест` : '—';
+  return `
+  <article class="card">
+    <div>
+      <div class="card-head">
+        <h3>${escapeHtml(c.campus)}</h3>
+        <span class="type-pill ${typePillClass(c.campusType)}">${escapeHtml(fmtText(c.campusType))}</span>
+      </div>
+      <div class="card-sub">День рождения: ${escapeHtml(fmtText(c.foundationDate))} · ${escapeHtml(fmtText(campusAge(c.foundationDate)))}</div>
+    </div>
+
+    <div class="card-highlight">
+      <div class="hl-row">${ICONS.pin}<span>${escapeHtml(fmtText(c.address))}</span></div>
+      <div class="hl-row">${ICONS.user}<span><b>${escapeHtml(fmtText(c.directorName))}</b> · директор кампуса</span></div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">${ICONS.building}<div><b>${escapeHtml(fmtText(c.totalArea))}</b> м² <small>общая / полезная ${escapeHtml(fmtText(c.usableArea))}</small></div></div>
+      <div class="stat">${ICONS.user}<div><b>${fmtInt(c.workplaces)}</b> <small>рабочих мест</small></div></div>
+    </div>
+
+    <div class="pill-row">
+      ${boolBadge(c.accessControlBool, 'СКУД есть', 'СКУД нет')}
+      ${boolBadge(c.educationLicenseBool, 'Лицензия есть', 'Лицензии нет')}
+      ${boolBadge(c.dormitory && c.dormitory.toLowerCase() !== 'нет' && c.dormitory.toLowerCase() !== 'отсутствует' ? true : (c.dormitory ? false : null), 'Общежитие есть', 'Без общежития')}
+    </div>
+    ${detailBlock('Общежитие, детали', c.dormitory)}
+
+    <div class="kv"><span class="k">Кластеры</span><span class="v">${escapeHtml(clusterSummary)}</span></div>
+    ${detailBlock('Места в кластерах — подробно', c.clusterSeatsDetail)}
+    ${detailBlock('АРМ в кластерах — подробно', c.armDetail)}
+    <div class="kv"><span class="k">Мест в конференц-зале</span><span class="v">${fmtText(c.conferenceHall)}</span></div>
+
+    <details class="disclosure">
+      <summary>Инвентарь для интенсивов</summary>
+      <div class="mini-stats" style="margin-top:8px;">
+        <div><b>${fmtInt(c.flipcharts)}</b><small>флипчарта</small></div>
+        <div><b>${fmtInt(c.whiteboards)}</b><small>маркер. доски</small></div>
+        <div><b>${fmtInt(c.intensiveTables)}</b><small>стола интенсива</small></div>
+      </div>
+    </details>
+
+    <details class="disclosure">
+      <summary>Юридическая информация</summary>
+      <div style="margin-top:8px;">
+        <div class="kv"><span class="k">Юр. наименование</span><span class="v">${escapeHtml(fmtText(c.legalName))}</span></div>
+        <div class="kv"><span class="k">Юридическая форма</span><span class="v">${escapeHtml(fmtText(c.legalForm))}</span></div>
+        <div class="kv"><span class="k">Учредитель</span><span class="v">${escapeHtml(fmtText(c.founder))}</span></div>
+        <div class="kv"><span class="k">Система налогообложения</span><span class="v">${escapeHtml(fmtText(c.taxSystem))}</span></div>
+        <div class="kv"><span class="k">НДС</span><span class="v">${escapeHtml(fmtText(c.vat))}</span></div>
+        ${c.vatReason ? `<div class="kv"><span class="k">Обоснование НДС</span><span class="v">${escapeHtml(c.vatReason)}</span></div>` : ''}
+        <div class="kv"><span class="k">Лицензия на образование</span><span class="v">${escapeHtml(fmtText(c.educationLicense))}</span></div>
+      </div>
+    </details>
+
+    <details class="disclosure">
+      <summary>Контакты руководства</summary>
+      <div style="margin-top:8px;">
+        <div class="kv"><span class="k">Почта директора</span><span class="v">${escapeHtml(fmtText(c.directorEmail))}</span></div>
+        <div class="kv"><span class="k">ДР директора</span><span class="v">${escapeHtml(fmtText(c.directorBirthday))}</span></div>
+      </div>
+    </details>
+
+    <div class="card-footer">
+      <button class="btn primary" data-cert="${c.id}">${ICONS.doc} Сформировать справку</button>
+    </div>
+  </article>`;
+}
+
+function buildBlock2(){
+  const section = $('#block2');
+  const taxOptions = Array.from(new Set(DATA.campuses.map(c => c.taxSystem).filter(Boolean)));
+  const yearOptions = Array.from(new Set(DATA.campuses.map(c => yearFromRuDate(c.foundationDate)).filter(Boolean))).sort();
+  const typeOptions = Array.from(new Set(DATA.campuses.map(c => c.campusType).filter(Boolean)));
+  const campusItems = DATA.campuses.map(c => ({id:c.id, label:c.campus}));
+  const ms = createMultiselect({ items: campusItems, selected: b2State.selected, onChange: renderBlock2, placeholderAll: 'Все кампусы' });
+  section.innerHTML = `
+    <div class="block-head">
+      <h1>Карточки кампусов</h1>
+      <p>Справочная информация по каждому кампусу — инфраструктура, юридические данные и руководство. Кнопка «Сформировать справку» открывает печатную версию документа.</p>
+    </div>
+    <div class="filterbar">
+      <div class="field"><label>Кампусы</label><div id="b2MsSlot"></div></div>
+      <div class="field"><label>Рабочих мест, от</label><input type="number" id="b2MinWp" min="0" placeholder="мин."></div>
+      <div class="field"><label>до</label><input type="number" id="b2MaxWp" min="0" placeholder="макс."></div>
+      <div class="field"><label>Система налогообложения</label>
+        <select id="b2Tax"><option value="all">Все</option>${taxOptions.map(t => `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join('')}</select>
+      </div>
+      <div class="field"><label>Год открытия</label>
+        <select id="b2Year"><option value="all">Все</option>${yearOptions.map(y => `<option value="${y}">${y}</option>`).join('')}</select>
+      </div>
+      <div class="field"><label>Вид кампуса</label>
+        <select id="b2Type"><option value="all">Все</option>${typeOptions.map(t => `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join('')}</select>
+      </div>
+      <div class="field"><label>Наличие СКУД</label>
+        <select id="b2Skud"><option value="all">Все</option><option value="yes">Да</option><option value="no">Нет</option><option value="unknown">Не указано</option></select>
+      </div>
+      <button class="btn-clear" id="b2Clear">Сбросить фильтры</button>
+    </div>
+    <div class="filterbar" style="margin-top:-8px;">
+      <button class="btn primary" id="b2ExportAll">${ICONS.download} Выгрузить все кампусы (XLSX)</button>
+      <button class="btn" id="b2CertSelected" style="margin-left:auto;">${ICONS.doc} Справка по выбранным кампусам</button>
+    </div>
+    <div id="b2Count" style="color:var(--muted);font-size:12.5px;margin-bottom:10px;"></div>
+    <div class="campus-grid" id="b2Grid"></div>`;
+
+  $('#b2MsSlot').appendChild(ms);
+  $('#b2ExportAll').addEventListener('click', exportAllCampusesXlsx);
+  $('#b2CertSelected').addEventListener('click', openCertificateForSelected);
+  $('#b2MinWp').addEventListener('input', e => { b2State.minWp = e.target.value === '' ? null : Number(e.target.value); renderBlock2(); });
+  $('#b2MaxWp').addEventListener('input', e => { b2State.maxWp = e.target.value === '' ? null : Number(e.target.value); renderBlock2(); });
+  $('#b2Tax').addEventListener('change', e => { b2State.tax = e.target.value; renderBlock2(); });
+  $('#b2Year').addEventListener('change', e => { b2State.year = e.target.value; renderBlock2(); });
+  $('#b2Type').addEventListener('change', e => { b2State.type = e.target.value; renderBlock2(); });
+  $('#b2Skud').addEventListener('change', e => { b2State.skud = e.target.value; renderBlock2(); });
+  $('#b2Clear').addEventListener('click', () => {
+    b2State.selected.clear(); b2State.minWp=null; b2State.maxWp=null; b2State.tax='all'; b2State.year='all'; b2State.type='all'; b2State.skud='all';
+    section.querySelectorAll('.ms-list .ms-item input').forEach(i => i.checked = false);
+    section.querySelector('.ms-btn').innerHTML = 'Все кампусы' + ICONS.chevronDown;
+    section.querySelectorAll('input[type=number]').forEach(i => i.value = '');
+    section.querySelectorAll('select').forEach(s => s.value = 'all');
+    renderBlock2();
+  });
+  renderBlock2();
+}
+
+function renderBlock2(){
+  const list = DATA.campuses.filter(b2Predicate);
+  $('#b2Count').textContent = `Показано ${list.length} из ${DATA.campuses.length} кампусов`;
+  const grid = $('#b2Grid');
+  grid.innerHTML = list.length
+    ? list.map(campusCardHtml).join('')
+    : `<div class="empty-state" style="grid-column:1/-1;">Под текущие фильтры ни один кампус не подходит. Попробуйте смягчить условия поиска.</div>`;
+  $$('[data-cert]', grid).forEach(btn => btn.addEventListener('click', () => openCertificate(btn.dataset.cert)));
+}
+
+/* ===================== Block 3: График стартов ===================== */
+const b3State = { selected:new Set(), monthSelected:new Set() };
+
+function dateChipClass(dateObj){
+  const d = diffDaysFromToday(dateObj);
+  if (d < 0) return 'past';
+  if (d === 0) return 'today';
+  if (d === 1) return 'tomorrow';
+  if (d <= 14) return 'soon';
+  return 'future';
+}
+function dateChipLabel(raw, cls){
+  if (cls === 'today') return `${raw} · сегодня`;
+  if (cls === 'tomorrow') return `${raw} · завтра`;
+  return raw;
+}
+function b3Columns(){
+  let list = DATA.campuses;
+  if (b3State.selected.size > 0) list = list.filter(c => b3State.selected.has(c.id));
+  return list;
+}
+function b3Months(){
+  let idxs = MONTHS.map((_, i) => i + 1);
+  if (b3State.monthSelected.size > 0) idxs = idxs.filter(i => b3State.monthSelected.has(i));
+  return idxs;
+}
+function renderScheduleCell(c, monthIdx){
+  if (!c.schedule) return '<td class="dash">—</td>';
+  const dates = c.schedule[String(monthIdx)] || c.schedule[monthIdx] || [];
+  if (!dates.length) return '<td class="dash">—</td>';
+  const chips = dates.map(raw => {
+    const d = parseRuDate(raw);
+    const cls = d ? dateChipClass(d) : 'future';
+    return `<span class="date-chip ${cls}">${escapeHtml(dateChipLabel(raw, cls))}</span>`;
+  }).join('');
+  return `<td>${chips}</td>`;
+}
+
+function buildBlock3(){
+  const section = $('#block3');
+  const campusItems = DATA.campuses.map(c => ({id:c.id, label:c.campus}));
+  const ms = createMultiselect({ items: campusItems, selected: b3State.selected, onChange: renderBlock3Table, placeholderAll: 'Все кампусы' });
+  const monthItems = MONTHS.map((label, i) => ({id:i+1, label}));
+  const msMonth = createMultiselect({ items: monthItems, selected: b3State.monthSelected, onChange: renderBlock3Table, placeholderAll: 'Все месяцы' });
+
+  section.innerHTML = `
+    <div class="block-head">
+      <h1>График стартов</h1>
+      <p>Даты стартов бассейнов по кампусам и месяцам. Подсветка действует относительно текущей даты вашего устройства.</p>
+    </div>
+    <div class="filterbar">
+      <div class="field"><label>Кампусы</label><div id="b3MsSlot"></div></div>
+      <div class="field"><label>Месяцы</label><div id="b3MonthMsSlot"></div></div>
+      <button class="btn-clear" id="b3Clear">Сбросить фильтры</button>
+      <button class="btn primary" id="b3Export" style="margin-left:auto;">${ICONS.download} Выгрузить график стартов (XLSX)</button>
+    </div>
+    <div class="legend-row">
+      <span class="lg"><span class="sw" style="background:var(--warn)"></span> сегодня / завтра</span>
+      <span class="lg"><span class="sw" style="background:#BFE6C7"></span> старт в ближайшие 14 дней</span>
+      <span class="lg"><span class="sw" style="background:#fff;border:1px solid var(--line-strong)"></span> будущий старт</span>
+      <span class="lg"><span class="sw" style="background:#FAFAF9;border:1px solid var(--line)"></span> прошедший старт</span>
+    </div>
+    <div class="table-scroll">
+      <table class="sched">
+        <thead><tr id="b3Head"></tr></thead>
+        <tbody id="b3Body"></tbody>
+      </table>
+    </div>`;
+  $('#b3MsSlot').appendChild(ms);
+  $('#b3MonthMsSlot').appendChild(msMonth);
+  $('#b3Clear').addEventListener('click', () => {
+    b3State.selected.clear();
+    b3State.monthSelected.clear();
+    section.querySelectorAll('.ms-list .ms-item input').forEach(i => i.checked = false);
+    section.querySelectorAll('.ms-btn')[0].innerHTML = 'Все кампусы' + ICONS.chevronDown;
+    section.querySelectorAll('.ms-btn')[1].innerHTML = 'Все месяцы' + ICONS.chevronDown;
+    renderBlock3Table();
+  });
+  $('#b3Export').addEventListener('click', exportScheduleXlsx);
+  renderBlock3Table();
+}
+
+function exportAllCampusesXlsx(){
+  if (typeof XLSX === 'undefined'){
+    alert('Библиотека для выгрузки в Excel ещё не успела загрузиться или недоступна в вашей сети. Подождите немного и попробуйте снова, либо проверьте подключение к интернету.');
+    return;
+  }
+  const headers = [
+    'Кампус','Вид кампуса','Адрес','День рождения кампуса','Возраст кампуса',
+    'Общая площадь, м²','Полезная площадь, м²','Рабочих мест','Общежитие','Наличие СКУД',
+    'Количество кластеров','Места в кластерах','Мест в конференц-зале','АРМ в кластерах',
+    'Флипчартов','Маркерных досок','Столов интенсива',
+    'Юр. наименование','Юридическая форма','Учредитель','Система налогообложения',
+    'Наличие НДС','Обоснование НДС','Лицензия на образование',
+    'ФИО директора','Почта директора','ДР директора',
+    'Активных участников Основы','Участников бассейна','Выпускников','CSI рег. заказчика',
+    'MAU','WAU/MAU основы','Мероприятий','Посетивших мероприятия','Стажировок от партнёров','CSI участников'
+  ];
+  const aoa = [headers];
+  DATA.campuses.forEach(c => {
+    aoa.push([
+      c.campus, fmtText(c.campusType), fmtText(c.address), fmtText(c.foundationDate), campusAge(c.foundationDate),
+      fmtText(c.totalArea), fmtText(c.usableArea), c.workplaces ?? '', fmtText(c.dormitory), fmtText(c.accessControl),
+      c.clustersCount ?? '', fmtText(c.clusterSeatsDetail), fmtText(c.conferenceHall), fmtText(c.armDetail),
+      c.flipcharts ?? '', c.whiteboards ?? '', c.intensiveTables ?? '',
+      fmtText(c.legalName), fmtText(c.legalForm), fmtText(c.founder), fmtText(c.taxSystem),
+      fmtText(c.vat), fmtText(c.vatReason), fmtText(c.educationLicense),
+      fmtText(c.directorName), fmtText(c.directorEmail), fmtText(c.directorBirthday),
+      c.activeCoreParticipants ?? '', c.poolParticipants ?? '', c.graduates ?? '', fmtCsi(c.csiCustomer),
+      c.mau ?? '', c.wauMauRatio ?? '', c.eventsCount ?? '', c.eventVisitors ?? '', c.internshipsCount ?? '', fmtCsi(c.csiParticipants)
+    ]);
+  });
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet(aoa);
+  XLSX.utils.book_append_sheet(wb, ws, 'Кампусы — сводные данные');
+  const ws2 = XLSX.utils.aoa_to_sheet([
+    ['Справочно'],
+    ['Дата выгрузки', todayRu()],
+    ['Источник', 'Дашборд сети кампусов «Школа 21»'],
+    ['Период показателей', 'на ' + fmtRuDateFromIso(DATA.updatedAt)]
+  ]);
+  XLSX.utils.book_append_sheet(wb, ws2, 'Справочно');
+  XLSX.writeFile(wb, `Кампусы_сводные_данные_${todayIso()}.xlsx`);
+}
+
+function renderBlock3Table(){
+  const cols = b3Columns();
+  const months = b3Months();
+  $('#b3Head').innerHTML = '<th>Месяц</th>' + cols.map(c => `<th>${escapeHtml(c.campus)}</th>`).join('');
+  const body = $('#b3Body');
+  if (!cols.length){
+    body.innerHTML = `<tr><td style="text-align:center;color:var(--muted);">Выберите хотя бы один кампус</td></tr>`;
+    return;
+  }
+  if (!months.length){
+    body.innerHTML = `<tr><td style="text-align:center;color:var(--muted);">Выберите хотя бы один месяц</td></tr>`;
+    return;
+  }
+  body.innerHTML = months.map(monthIdx => {
+    const cells = cols.map(c => renderScheduleCell(c, monthIdx)).join('');
+    return `<tr><td>${MONTHS[monthIdx-1]}</td>${cells}</tr>`;
+  }).join('');
+}
+
+function exportScheduleXlsx(){
+  if (typeof XLSX === 'undefined'){
+    alert('Библиотека для выгрузки в Excel ещё не успела загрузиться или недоступна в вашей сети. Подождите немного и попробуйте снова, либо проверьте подключение к интернету.');
+    return;
+  }
+  const cols = b3Columns();
+  if (!cols.length){ alert('Выберите хотя бы один кампус для выгрузки.'); return; }
+  const months = b3Months();
+  if (!months.length){ alert('Выберите хотя бы один месяц для выгрузки.'); return; }
+  const aoa = [['Месяц', ...cols.map(c => c.campus)]];
+  months.forEach(monthIdx => {
+    const row = [MONTHS[monthIdx-1]];
+    cols.forEach(c => {
+      const dates = (c.schedule && c.schedule[String(monthIdx)]) || [];
+      row.push(dates.join(', '));
+    });
+    aoa.push(row);
+  });
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet(aoa);
+  XLSX.utils.book_append_sheet(wb, ws, 'График стартов');
+  const ws2 = XLSX.utils.aoa_to_sheet([
+    ['Справочно'],
+    ['Дата выгрузки', todayRu()],
+    ['Источник', 'Дашборд сети кампусов «Школа 21»'],
+    ['Кампусы без данных о стартах', DATA.campuses.filter(c => !c.schedule).map(c => c.campus).join(', ')]
+  ]);
+  XLSX.utils.book_append_sheet(wb, ws2, 'Справочно');
+  XLSX.writeFile(wb, `График_стартов_${todayIso()}.xlsx`);
+}
+
+/* ===================== Справка о кампусе (Раздел 1-5) ===================== */
+function certKv(label, value){
+  return `<div class="kv"><span class="k">${escapeHtml(label)}</span><span class="v">${escapeHtml(fmtText(value))}</span></div>`;
+}
+function certificateCampusSections(c, withDivider){
+  return `
+    ${withDivider ? `<div class="cert-campus-divider"><span>Кампус: ${escapeHtml(c.campus)}</span></div>` : ''}
+    <div class="cert-section">
+      <h4>1. Общая информация о кампусе</h4>
+      ${certKv('Наименование кампуса', c.campus)}
+      ${certKv('Тип кампуса', c.campusType)}
+      ${certKv('Адрес', c.address)}
+      ${certKv('День рождения кампуса', c.foundationDate)}
+      ${certKv('Возраст кампуса', campusAge(c.foundationDate))}
+      ${certKv('Директор кампуса', c.directorName)}
+      ${certKv('Корпоративная почта директора', c.directorEmail)}
+    </div>
+
+    <div class="cert-section">
+      <h4>2. Юридическая информация</h4>
+      ${certKv('Полное юридическое наименование', c.legalName)}
+      ${certKv('Учредитель', c.founder)}
+      ${certKv('Система налогообложения', c.taxSystem)}
+      ${certKv('Наличие НДС', c.vat)}
+      ${certKv('Обоснование отсутствия НДС', c.vatReason)}
+      ${certKv('Лицензия на образовательную деятельность', c.educationLicense)}
+    </div>
+
+    <div class="cert-section">
+      <h4>3. Инфраструктура кампуса</h4>
+      ${certKv('Общая площадь, м²', c.totalArea)}
+      ${certKv('Полезная площадь, м²', c.usableArea)}
+      ${certKv('Количество рабочих мест', c.workplaces)}
+      ${certKv('Наличие общежития', c.dormitory)}
+      ${certKv('Наличие СКУД', c.accessControl)}
+      ${certKv('Количество кластеров', c.clustersCount)}
+      ${certKv('Количество мест в кластерах', c.clusterSeatsDetail)}
+      ${certKv('Количество мест в конференц-зале', c.conferenceHall)}
+      ${certKv('Количество АРМ в кластерах', c.armDetail)}
+      ${certKv('Количество флипчартов', c.flipcharts)}
+      ${certKv('Количество маркерных досок', c.whiteboards)}
+      ${certKv('Столов для коммерческих интенсивов', c.intensiveTables)}
+    </div>
+
+    <div class="cert-section">
+      <h4>4. Ключевые показатели на ${fmtRuDateFromIso(DATA.updatedAt)}</h4>
+      ${certKv('Активных участников Основы, накоп.', fmtInt(c.activeCoreParticipants))}
+      ${certKv('Участников бассейна, накоп.', fmtInt(c.poolParticipants))}
+      ${certKv('Выпускников, накоп.', fmtInt(c.graduates))}
+      ${certKv('CSI рег. заказчика', fmtCsi(c.csiCustomer))}
+      ${certKv('MAU (основа + выпускники)', fmtInt(c.mau))}
+      ${certKv('WAU / MAU основы', fmtRatio(c.wauMauRatio))}
+      ${certKv('Количество мероприятий', fmtInt(c.eventsCount))}
+      ${certKv('Посетивших мероприятия', fmtInt(c.eventVisitors))}
+      ${certKv('Стажировок от партнёров', fmtInt(c.internshipsCount))}
+      ${certKv('CSI участников', fmtCsi(c.csiParticipants))}
+    </div>`;
+}
+function certificateHtml(campusesArr){
+  const multi = campusesArr.length > 1;
+  return `
+  <div class="cert-overlay">
+    <div class="cert-modal">
+      <div class="cert-actions">
+        <button class="btn-x cert-close">${ICONS.close} Закрыть</button>
+        <button class="btn primary cert-print">${ICONS.printer} Печать / сохранить как PDF</button>
+      </div>
+      <div class="cert-body">
+        <div class="cert-brand">
+          <div class="wm">Школа<span class="num" style="color:#21A038;">21</span></div>
+        </div>
+        <div class="cert-title">${multi ? `Справка по ${campusesArr.length} кампусам` : 'Справка о кампусе'}</div>
+        <div class="cert-dates">Дата формирования справки: ${todayRu()} · Данные актуальны на ${fmtRuDateFromIso(DATA.updatedAt)}</div>
+        ${campusesArr.map(c => certificateCampusSections(c, multi)).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+function openCertificateMulti(campusesArr){
+  if (!campusesArr.length) return;
+  const root = $('#modalRoot');
+  root.innerHTML = certificateHtml(campusesArr);
+  root.querySelector('.cert-close').addEventListener('click', closeCertificate);
+  root.querySelector('.cert-print').addEventListener('click', () => window.print());
+  root.querySelector('.cert-overlay').addEventListener('click', e => { if (e.target.classList.contains('cert-overlay')) closeCertificate(); });
+  document.addEventListener('keydown', escCloseCert);
+}
+function openCertificate(id){
+  const c = DATA.campuses.find(x => x.id === id);
+  if (!c) return;
+  openCertificateMulti([c]);
+}
+function openCertificateForSelected(){
+  if (b2State.selected.size === 0){
+    alert('Сначала выберите хотя бы один кампус в фильтре «Кампусы».');
+    return;
+  }
+  const arr = DATA.campuses.filter(c => b2State.selected.has(c.id));
+  openCertificateMulti(arr);
+}
+function escCloseCert(e){ if (e.key === 'Escape') closeCertificate(); }
+function closeCertificate(){
+  $('#modalRoot').innerHTML = '';
+  document.removeEventListener('keydown', escCloseCert);
+}
+
+/* ===================== Init ===================== */
+function wireNav(){
+  $$('#appNav button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      $$('#appNav button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      $$('section.block').forEach(s => s.classList.remove('active'));
+      $('#' + btn.dataset.target).classList.add('active');
+    });
+  });
+}
+function wireFootnote(){
+  $('#footnoteToggle').addEventListener('click', () => $('#footnoteBox').classList.toggle('open'));
+}
+
+/* ===================== Olga chat assistant ===================== */
+const OLGA_API = (window.OLGA_API_BASE || '') + '/api/chat';
+const olgaState = { history: [], open: false, busy: false };
+
+function activeSection(){
+  const btn = $('#appNav .active');
+  return btn ? btn.dataset.target : null;
+}
+
+function olgaInlineMd(text){
+  return escapeHtml(text)
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/_(.+?)_/g, '<em>$1</em>');
+}
+
+function formatOlgaMarkdown(text){
+  const lines = String(text || '').split('\n');
+  const out = [];
+  let inList = false;
+  let inTable = false;
+
+  const closeList = () => { if (inList) { out.push('</ul>'); inList = false; } };
+  const closeTable = () => { if (inTable) { out.push('</tbody></table>'); inTable = false; } };
+
+  for (const raw of lines) {
+    const line = raw.trim();
+    if (line.startsWith('|') && line.endsWith('|')) {
+      closeList();
+      const cells = line.slice(1, -1).split('|').map(c => c.trim());
+      if (cells.every(c => /^-+$/.test(c))) continue;
+      if (!inTable) {
+        out.push('<table><thead><tr>' + cells.map(c => `<th>${olgaInlineMd(c)}</th>`).join('') + '</tr></thead><tbody>');
+        inTable = true;
+      } else {
+        out.push('<tr>' + cells.map(c => `<td>${olgaInlineMd(c)}</td>`).join('') + '</tr>');
+      }
+      continue;
+    }
+    closeTable();
+
+    if (line.startsWith('- ')) {
+      if (!inList) { out.push('<ul>'); inList = true; }
+      out.push('<li>' + olgaInlineMd(line.slice(2)) + '</li>');
+      continue;
+    }
+    closeList();
+
+    if (!line) {
+      out.push('<br>');
+      continue;
+    }
+    if (line.startsWith('### ')) out.push('<h4>' + olgaInlineMd(line.slice(4)) + '</h4>');
+    else if (line.startsWith('## ')) out.push('<h3>' + olgaInlineMd(line.slice(3)) + '</h3>');
+    else if (line.startsWith('# ')) out.push('<h2>' + olgaInlineMd(line.slice(2)) + '</h2>');
+    else out.push('<p>' + olgaInlineMd(line) + '</p>');
+  }
+  closeList();
+  closeTable();
+  return out.join('');
+}
+
+function olgaAppend(role, text, extraHtml){
+  const box = $('#olgaMsgs');
+  const div = document.createElement('div');
+  div.className = 'olga-msg ' + role;
+  if (role === 'assistant') {
+    div.innerHTML = formatOlgaMarkdown(text);
+  } else {
+    div.textContent = text;
+  }
+  if (extraHtml) div.insertAdjacentHTML('beforeend', extraHtml);
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+  return div;
+}
+
+function downloadOlgaReportXlsx(reportData){
+  if (typeof XLSX === 'undefined'){
+    alert('Библиотека для выгрузки в Excel ещё не успела загрузиться. Подождите немного и попробуйте снова.');
+    return;
+  }
+  const data = reportData || buildOlgaReportDataFromDashboard();
+  const wb = XLSX.utils.book_new();
+
+  const summary = [
+    ['Отчёт', data.title || 'Сводный отчёт'],
+    ['Дата актуальности', data.updatedAt || (DATA && DATA.updatedAt) || '—'],
+    ['Период сравнения', data.comparisonPeriod || '2026-06 → 2026-07'],
+    ['Дата выгрузки', todayRu()],
+    ['Источник', 'Ассистент Ольга — дашборд «Школа 21»'],
+    [],
+    ['Зоны динамики', 'Кол-во', 'Кампусы'],
+  ];
+  (data.zoneSummary || []).forEach(row => {
+    summary.push([row.zone, row.count, row.campuses]);
+  });
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(summary), 'Сводка');
+
+  const mauSheet = [['Место', 'Кампус', 'MAU (07.2026)']];
+  (data.topMau || []).forEach((row, i) => mauSheet.push([i + 1, row.campus, row.mau]));
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(mauSheet), 'Топ MAU');
+
+  const kpiHeaders = [
+    'Кампус', 'Тип', 'Зона', 'Рабочих мест', 'CSI рег. заказчика', 'CSI участников',
+    'Основа 06', 'Основа 07', 'Бассейн 06', 'Бассейн 07', 'Выпускники 06', 'Выпускники 07',
+    'MAU 06', 'MAU 07', 'WAU/MAU 07', 'Мероприятия 07', 'Посетители 07', 'Стажировки 07'
+  ];
+  const kpiRows = [kpiHeaders];
+  (data.campuses || []).forEach(c => {
+    kpiRows.push([
+      c.campus, c.campusType ?? '', c.zone ?? '',
+      c.workplaces ?? '', c.csiCustomer ?? '', c.csiParticipants ?? '',
+      c.activeCoreParticipants_06 ?? '', c.activeCoreParticipants_07 ?? '',
+      c.poolParticipants_06 ?? '', c.poolParticipants_07 ?? '',
+      c.graduates_06 ?? '', c.graduates_07 ?? '',
+      c.mau_06 ?? '', c.mau_07 ?? '', c.wauMauRatio_07 ?? '',
+      c.eventsCount_07 ?? '', c.eventVisitors_07 ?? '', c.internshipsCount_07 ?? '',
+    ]);
+  });
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(kpiRows), 'KPI по кампусам');
+
+  const conclusions = [['Выводы и рекомендации']];
+  (data.conclusions || []).forEach(item => conclusions.push([item]));
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(conclusions), 'Выводы');
+
+  XLSX.writeFile(wb, `otchet_shkola21_${todayIso()}.xlsx`);
+}
+
+function buildOlgaReportDataFromDashboard(){
+  if (!DATA) return { title: 'Сводный отчёт', zoneSummary: [], topMau: [], campuses: [], conclusions: [] };
+  const zones = { 'зелёная': [], 'жёлтая': [], 'красная': [], 'нет данных': [] };
+  const campuses = [];
+  const topMau = [];
+  DATA.campuses.forEach(c => {
+    const zone = campusOverallZone(c);
+    const zoneKey = zone ? ({green:'зелёная', yellow:'жёлтая', red:'красная'}[zone] || 'нет данных') : 'нет данных';
+    zones[zoneKey].push(c.campus);
+    const p06 = (c.periods && c.periods['2026-06']) || {};
+    const p07 = (c.periods && c.periods['2026-07']) || {};
+    campuses.push({
+      campus: c.campus, campusType: c.campusType, zone: zoneKey, workplaces: c.workplaces,
+      csiCustomer: c.csiCustomer, csiParticipants: c.csiParticipants,
+      activeCoreParticipants_06: p06.activeCoreParticipants, activeCoreParticipants_07: p07.activeCoreParticipants,
+      poolParticipants_06: p06.poolParticipants, poolParticipants_07: p07.poolParticipants,
+      graduates_06: p06.graduates, graduates_07: p07.graduates,
+      mau_06: p06.mau, mau_07: p07.mau, wauMauRatio_07: p07.wauMauRatio,
+      eventsCount_07: p07.eventsCount, eventVisitors_07: p07.eventVisitors, internshipsCount_07: p07.internshipsCount,
+    });
+    if (p07.mau != null) topMau.push({ campus: c.campus, mau: p07.mau });
+  });
+  topMau.sort((a, b) => b.mau - a.mau);
+  return {
+    title: 'Сводный отчёт по сети кампусов «Школа 21»',
+    updatedAt: DATA.updatedAt,
+    comparisonPeriod: '2026-06 → 2026-07',
+    zoneSummary: Object.entries(zones).map(([zone, names]) => ({ zone, count: names.length, campuses: names.join(', ') || '—' })),
+    topMau: topMau.slice(0, 10),
+    campuses,
+    conclusions: [
+      'Проконтролировать кампусы в красной зоне по динамике KPI.',
+      'Сравнить показатели MAU и вовлечённость (WAU/MAU) у лидеров и аутсайдеров.',
+      'Для кампусов без данных по периодам уточнить загрузку истории.',
+    ],
+  };
+}
+
+async function sendOlgaMessage(message){
+  const text = (message || '').trim();
+  if (!text || olgaState.busy) return;
+  olgaState.busy = true;
+  $('#olgaSend').disabled = true;
+  olgaAppend('user', text);
+  olgaState.history.push({role:'user', content:text});
+  const typing = olgaAppend('typing', 'Ольга думает…');
+  try {
+    const res = await fetch(OLGA_API, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        message: text,
+        history: olgaState.history.slice(0, -1),
+        active_section: activeSection(),
+      }),
+    });
+    const data = await res.json();
+    typing.remove();
+    if (!res.ok) throw new Error(data.detail || 'Ошибка сервера');
+    let extra = '';
+    if (data.is_report) {
+      extra = `<button type="button" class="olga-report" data-report="1">Скачать отчёт (XLSX)</button>`;
+    }
+    const node = olgaAppend('assistant', data.reply, extra);
+    if (data.is_report) {
+      node.querySelector('[data-report]')?.addEventListener('click', () => downloadOlgaReportXlsx(data.report_data));
+    }
+    olgaState.history.push({role:'assistant', content:data.reply});
+  } catch (err) {
+    typing.remove();
+    olgaAppend('error', 'Не удалось получить ответ от LLM. Проверьте ключи в .env или попробуйте быстрые вопросы: «Красная зона», «Топ MAU», «Сводный отчёт».\n\n' + (err.message || err));
+  } finally {
+    olgaState.busy = false;
+    $('#olgaSend').disabled = false;
+    $('#olgaInput').focus();
+  }
+}
+
+function toggleOlga(open){
+  olgaState.open = open;
+  $('#olgaPanel').classList.toggle('open', open);
+  $('#olgaFab').classList.toggle('open', open);
+  if (open) {
+    if (!$('#olgaMsgs').children.length) {
+      olgaAppend('assistant', 'Привет! Я Ольга — ассистент дашборда «Школа 21». Могу ответить по кампусам, KPI, зонам критичности и сформировать отчёт.');
+    }
+    $('#olgaInput').focus();
+  }
+}
+
+function wireOlga(){
+  $('#olgaFab').addEventListener('click', () => toggleOlga(!olgaState.open));
+  $('#olgaClose').addEventListener('click', () => toggleOlga(false));
+  $('#olgaForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const input = $('#olgaInput');
+    const msg = input.value;
+    input.value = '';
+    sendOlgaMessage(msg);
+  });
+  $('#olgaInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      $('#olgaForm').requestSubmit();
+    }
+  });
+  $$('#olgaQuick button').forEach(btn => {
+    btn.addEventListener('click', () => sendOlgaMessage(btn.dataset.q));
+  });
+}
+
+function renderDashboard(){
+  $('#updatedAtLabel').textContent = 'данные актуальны на ' + fmtRuDateFromIso(DATA.updatedAt);
+  buildBlock1();
+  buildBlock2();
+  buildBlock3();
+}
+
+const PRESERVE_FROM_EMBEDDED = ['schedule', 'address', 'conferenceHall', 'legalForm', 'vatReason', 'campusAgeText'];
+
+function mergeEmbeddedCampusFields(apiData){
+  const embeddedEl = document.getElementById('campusDataJson');
+  if (!embeddedEl || !apiData?.campuses?.length) return apiData;
+  let embedded;
+  try { embedded = JSON.parse(embeddedEl.textContent); } catch { return apiData; }
+  const seedByName = Object.fromEntries(
+    (embedded.campuses || []).map(c => [(c.campus || '').trim().toLowerCase(), c])
+  );
+  apiData.campuses.forEach(c => {
+    const seed = seedByName[(c.campus || '').trim().toLowerCase()];
+    if (!seed) return;
+    PRESERVE_FROM_EMBEDDED.forEach(field => {
+      if (seed[field] != null && (c[field] == null || (field === 'schedule' && !Object.keys(c[field] || {}).length))) {
+        c[field] = seed[field];
+      }
+    });
+  });
+  return apiData;
+}
+
+async function loadDashboardData(){
+  try {
+    const res = await fetch('/api/data', {cache:'no-store'});
+    if (!res.ok) throw new Error('api');
+    DATA = mergeEmbeddedCampusFields(await res.json());
+    return 'api';
+  } catch {
+    DATA = JSON.parse(document.getElementById('campusDataJson').textContent);
+    return 'embedded';
+  }
+}
+
+async function init(){
+  await loadDashboardData();
+  wireNav();
+  renderDashboard();
+  wireFootnote();
+  wireOlga();
+  const refreshMin = 5;
+  setInterval(async () => {
+    const prev = DATA && DATA.updatedAt;
+    await loadDashboardData();
+    if (DATA.updatedAt !== prev) renderDashboard();
+    else $('#updatedAtLabel').textContent = 'данные актуальны на ' + fmtRuDateFromIso(DATA.updatedAt);
+  }, refreshMin * 60 * 1000);
+}
+document.addEventListener('DOMContentLoaded', init);
+
+</script>
+</body>
+</html>
