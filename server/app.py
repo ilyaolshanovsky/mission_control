@@ -14,7 +14,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
-from .context import build_context
+from .chat_sessions import (
+    append_exchange,
+    clear_session,
+    ensure_session_id,
+    get_history,
+    history_for_llm,
+)
 from .data_store import get_sync_status, load_data, refresh_from_sheet
 from .fallback import try_local_answer
 from .knowledge import DASHBOARD_GUIDE, load_school21_knowledge
@@ -73,15 +79,40 @@ class ChatMessage(BaseModel):
 
 class ChatRequest(BaseModel):
     message: str = Field(min_length=1, max_length=8000)
+    session_id: str | None = None
     history: list[ChatMessage] = Field(default_factory=list)
     active_section: str | None = None
 
 
 class ChatResponse(BaseModel):
     reply: str
+    session_id: str
     is_report: bool = False
     assistant_name: str = ASSISTANT_NAME
     report_data: dict | None = None
+
+
+_FOLLOW_UP_RE = re.compile(
+    r"^(а|и|там|тоже|этот|эта|это|он|она|они|их|его|её|где|когда|сколько|почему|"
+    r"какой|какая|какие|уточни|подробн|ещё|еще|только|именно)\b",
+    re.IGNORECASE,
+)
+
+
+def _is_follow_up(message: str, history: list[dict[str, str]]) -> bool:
+    if not history:
+        return False
+    q = message.strip()
+    if len(q) > 120:
+        return False
+    return bool(_FOLLOW_UP_RE.search(q.lower()))
+
+
+def _respond(session_id: str, user_message: str, reply: str) -> ChatResponse:
+    append_exchange(session_id, user_message, reply)
+    response = _chat_response(reply)
+    response.session_id = session_id
+    return response
 
 
 def _parse_report_flag(reply: str) -> tuple[str, bool]:
@@ -137,11 +168,29 @@ def health() -> dict[str, str]:
     return {"status": "ok", "assistant": ASSISTANT_NAME}
 
 
+@app.get("/api/chat/session")
+def chat_session(session_id: str | None = None) -> dict:
+    sid = ensure_session_id(session_id)
+    return {"session_id": sid, "history": get_history(sid)}
+
+
+@app.delete("/api/chat/session")
+def chat_session_clear(session_id: str) -> dict:
+    sid = ensure_session_id(session_id)
+    clear_session(sid)
+    return {"ok": True, "session_id": sid}
+
+
 @app.post("/api/chat", response_model=ChatResponse)
 def olga_chat(req: ChatRequest) -> ChatResponse:
-    local = try_local_answer(req.message)
+    session_id = ensure_session_id(req.session_id)
+    prior_history = get_history(session_id)
+
+    local = None
+    if not _is_follow_up(req.message, prior_history):
+        local = try_local_answer(req.message)
     if local is not None:
-        return _chat_response(local[0])
+        return _respond(session_id, req.message, local[0])
 
     extra_sections: list[str] = []
     if should_web_search(req.message):
@@ -163,17 +212,17 @@ def olga_chat(req: ChatRequest) -> ChatResponse:
         dashboard_guide=DASHBOARD_GUIDE,
     )
     messages: list[dict[str, str]] = [{"role": "system", "content": system}]
-    for item in req.history[-10:]:
-        messages.append({"role": item.role, "content": item.content})
+    for item in history_for_llm(session_id):
+        messages.append({"role": item["role"], "content": item["content"]})
     messages.append({"role": "user", "content": req.message})
     try:
         reply = chat(messages)
     except (RuntimeError, Exception):
         local = try_local_answer(req.message)
         if local is not None:
-            return _chat_response(local[0])
+            return _respond(session_id, req.message, local[0])
         raise HTTPException(
             status_code=503,
             detail="LLM недоступен. Попробуйте конкретный вопрос: «CSI рег. заказчика в Ташкенте», «Красная зона», «Топ MAU».",
         ) from None
-    return _chat_response(reply)
+    return _respond(session_id, req.message, reply)
