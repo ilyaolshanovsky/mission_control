@@ -21,6 +21,7 @@ from .chat_sessions import (
     get_history,
     history_for_llm,
 )
+from .context import build_context
 from .data_store import get_sync_status, load_data, refresh_from_sheet
 from .fallback import try_local_answer
 from .knowledge import DASHBOARD_GUIDE, load_school21_knowledge
@@ -108,23 +109,26 @@ def _is_follow_up(message: str, history: list[dict[str, str]]) -> bool:
     return bool(_FOLLOW_UP_RE.search(q.lower()))
 
 
-def _respond(session_id: str, user_message: str, reply: str) -> ChatResponse:
-    append_exchange(session_id, user_message, reply)
-    response = _chat_response(reply)
-    response.session_id = session_id
-    return response
-
-
 def _parse_report_flag(reply: str) -> tuple[str, bool]:
     is_report = "[[REPORT: да]]" in reply or "[[REPORT: yes]]" in reply
     cleaned = re.sub(r"\[\[REPORT:\s*(да|yes)\]\]\s*", "", reply, flags=re.I).strip()
     return cleaned, is_report
 
 
-def _chat_response(reply: str) -> ChatResponse:
+def _chat_response(reply: str, session_id: str) -> ChatResponse:
     reply, is_report = _parse_report_flag(reply)
     payload = build_report_data() if is_report else None
-    return ChatResponse(reply=reply, is_report=is_report, report_data=payload)
+    return ChatResponse(
+        reply=reply,
+        session_id=session_id,
+        is_report=is_report,
+        report_data=payload,
+    )
+
+
+def _respond(session_id: str, user_message: str, reply: str) -> ChatResponse:
+    append_exchange(session_id, user_message, reply)
+    return _chat_response(reply, session_id)
 
 
 @app.get("/api/data")

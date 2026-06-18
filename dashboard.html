@@ -1697,7 +1697,13 @@ async function sendOlgaMessage(message){
         active_section: activeSection(),
       }),
     });
-    const data = await res.json();
+    const raw = await res.text();
+    let data;
+    try {
+      data = JSON.parse(raw);
+    } catch (_) {
+      throw new Error(res.ok ? 'Некорректный ответ сервера' : (raw.slice(0, 120) || 'Ошибка сервера'));
+    }
     typing.remove();
     if (!res.ok) throw new Error(data.detail || 'Ошибка сервера');
     if (data.session_id) olgaState.sessionId = data.session_id;
