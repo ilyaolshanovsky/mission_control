@@ -424,6 +424,19 @@ def _format_campus_starts(campus: dict[str, Any], message: str) -> str:
     return _format_schedule_rows(rows, title=title, empty_hint=empty_hint)
 
 
+def _format_ceo_answer() -> str:
+    return (
+        "**Рустам Айнетдинов** — CEO (директор) «Школы 21», бесплатной школы цифровых технологий от Сбера.\n\n"
+        "- Сайт: https://ainetdinov.ru/\n"
+        "- С **2026 года** руководит «Школой 21»\n"
+        "- Ранее — **CEO Skyeng** (EdTech №1 в РФ): оценка компании > $530 млн\n"
+        "- Карьера в **Юниум**: региональное и франчайзинговое развитие сети\n"
+        "- Генсовет «Деловой России», правление «Опоры России»\n"
+        "- Фокус: EdTech, ИИ в образовании, масштабирование обучения\n\n"
+        "_На дашборде в карточках кампусов — директора отдельных кампусов, не CEO сети._"
+    )
+
+
 def try_local_answer(message: str) -> tuple[str, bool] | None:
     q = message.lower().strip()
 
@@ -440,6 +453,17 @@ def try_local_answer(message: str) -> tuple[str, bool] | None:
             "«где ближайшие старты», «как поступить в Школу 21».",
             False,
         )
+
+    if (
+        re.search(r"айнетдинов|ainetdinov", q)
+        or re.search(r"\bрустам\b", q)
+        or (
+            re.search(r"ceo|сио|генеральн|руководител|директор", q)
+            and re.search(r"школ\w*\s*21|21-school", q)
+        )
+        or q in {"кто ceo", "кто директор", "кто руководит школой 21", "кто ceo школы 21"}
+    ):
+        return _format_ceo_answer(), False
 
     if re.search(r"красн\w*\s+зон", q) or "красная зона" in q or q == "красная зона":
         return _format_zone_answer("красная", "Красная зона"), False
