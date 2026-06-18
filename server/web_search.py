@@ -40,6 +40,8 @@ def should_web_search(message: str) -> bool:
         return True
     if _SCHOOL21_RE.search(message) and _ADMISSION_RE.search(message) and not _DASHBOARD_RE.search(message):
         return True
+    if _SCHOOL21_RE.search(message) and re.search(r"конкурент|альтернатив|с\s+чем\s+сравн", message, re.I):
+        return True
     return False
 
 

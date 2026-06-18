@@ -103,8 +103,16 @@ def _csi_zone(data: dict[str, Any], key: str, value: Any) -> str | None:
 
 def _detect_metric(query: str) -> str | None:
     q = query.lower()
+    if re.search(r"конкурент|альтернатив|с\s+чем\s+сравн|аналог\w*\s+школ", q):
+        return None
     for key, aliases in METRIC_ALIASES.items():
         for alias in aliases:
+            if alias == "основ":
+                if re.search(r"участник\w*\s+основ", q):
+                    return key
+                if re.search(r"\bоснов[аеуыи]\b", q) and not re.search(r"основн", q):
+                    return key
+                continue
             if alias in q:
                 return key
     return None
@@ -424,6 +432,20 @@ def _format_campus_starts(campus: dict[str, Any], message: str) -> str:
     return _format_schedule_rows(rows, title=title, empty_hint=empty_hint)
 
 
+def _format_competitors_answer() -> str:
+    return (
+        "**Конкуренты и альтернативы «Школе 21»** в сегменте IT-образования в России:\n\n"
+        "- **Яндекс Практикум** — платные программы с фокусом на трудоустройство\n"
+        "- **Skyeng / Skypro** — крупный EdTech (CEO Школы 21 — Рустам Айнетдинов, ex-CEO Skyeng)\n"
+        "- **Skillbox, Нетология, Hexlet** — коммерческие онлайн-школы программирования\n"
+        "- **Вузы и колледжи** — классическое дипломное IT-образование\n"
+        "- **École 42** — не конкурент в РФ, но методологический ориентир (peer-to-peer, проекты)\n\n"
+        "**Чем Школа 21 отличается:** обучение **бесплатное**, отбор через «бассейн», "
+        "формат peer-to-peer без лекций, сеть очных кампусов по стране.\n\n"
+        "_Напишите «найди в интернете конкурентов школы 21» — подтяну свежие материалы._"
+    )
+
+
 def _format_ceo_answer() -> str:
     return (
         "**Рустам Айнетдинов** — CEO (директор) «Школы 21», бесплатной школы цифровых технологий от Сбера.\n\n"
@@ -453,6 +475,12 @@ def try_local_answer(message: str) -> tuple[str, bool] | None:
             "«где ближайшие старты», «как поступить в Школу 21».",
             False,
         )
+
+    if (
+        re.search(r"конкурент|альтернатив", q)
+        and re.search(r"школ\w*\s*21|21-school|school\s*21", q)
+    ) or q in {"конкуренты школы 21", "кто конкуренты", "с кем конкурирует школа 21"}:
+        return _format_competitors_answer(), False
 
     if (
         re.search(r"айнетдинов|ainetdinov", q)
